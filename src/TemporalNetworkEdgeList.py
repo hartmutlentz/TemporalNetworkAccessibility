@@ -1,15 +1,9 @@
 #! /usr/bin/python
 #
-import sys
-try: sys.path.append('/Users/lentz/Documents/GitHub_locals/my_py') # Mac
-except: pass
-try: sys.path.append('/home/lentz/Documents/GitHub_locals/my_py') # Beta-Cl
-except: pass
 
 import random
 import scipy as sc, numpy as np
-import networkx as nx # Optional
-import Gewindehammer as gwh # Optional
+import networkx as nx # Optional, for CM model
 
 
 class TemporalEdgeList():
@@ -301,7 +295,14 @@ class TemporalEdgeList():
         """ writes self to txtfile.
             
         """
-        gwh.write_array(self.edges,fname)
+        arr=self.edges
+        g=file(fname,'w+')
+        for i in range(len(arr)):
+            wstring=''
+            for j in range(1,len(arr[i])): wstring += '\t'+str(arr[i][j])
+            g.writelines(( str(arr[i][0])+wstring+'\n' ))
+        g.close
+        
         return
 
     def average_size(self):

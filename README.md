@@ -5,6 +5,19 @@ Provides classes for Adjacency Matrix Sequences and Temporal Network Edgelists.
 An example of usage is shown in 'Unfold_Accessibility.py'.
 
 
+
+Required packages:
+- scipy
+- numpy
+- Networkx package (optional, required only for the configuration model).
+
+The class AdjMatrixSequence is implemented using scipy.sparse matrices.
+These matrices are restricted to 2^31 nonzero entries, regardless of the used memory!
+
+
+
+
+Datasets:
 Exemplary temporal network datasets are provided in the 'edgelists' folder.
 The file 'edgelists/sexual_contacts.dat' is from [1] and the file 'edgelists/sociopatterns_hypertext.dat' ca be downloaded from sociopatterns.org [2].
 Both files were also used in [3]

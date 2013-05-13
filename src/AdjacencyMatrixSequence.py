@@ -8,7 +8,6 @@ from numpy import loadtxt, zeros, savetxt
 import scipy
 from random import sample
 from collections import defaultdict
-import networkx as nx
 from scipy.io import mmread,mmwrite,loadmat,savemat
 import random
 
@@ -430,10 +429,9 @@ class AdjMatrixSequence(list):
 if __name__ == "__main__":
     from pprint import pprint
     
-    At=AdjMatrixSequence("T_edgelist.txt",directed=False)
-    print 'Hier ', len(At)
+    At=AdjMatrixSequence("sociopatterns_hypertext.dat",directed=False)
+    print len(At)
     c=At.unfold_accessibility()
-    gwh.dict2file(c,"cumu.txt")
 
 
 
