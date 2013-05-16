@@ -251,7 +251,12 @@ class AdjMatrixSequence(list):
         self.is_directed=False
         #else:
         #    raise NotImplementedError, "Network is already undirected."
-
+    
+    def to_dok(self):
+        """ converts every matrix to dok type as needed for map-reduce-processing. """
+        for i in range(len(self)):
+            self[i]=self[i].todok()
+    
     def clustering_matrix2vector(self,in_file):
         """ Reads file and returns vector from matrix """
         C=mmread(in_file)

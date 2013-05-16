@@ -14,10 +14,10 @@ the_file='edgelists/sociopatterns_hypertext.dat'
 At=AdjMatrixSequence(the_file,directed=True,write_label_file=False)
 
 # compute accessibility
-c=At.unfold_accessibility()
-h=Tools.cdf2histogram(c)
-Tools.dict2file(c,"path_density.txt")
-Tools.dict2file(h,"path_durations.txt")
+#c=At.unfold_accessibility()
+#h=Tools.cdf2histogram(c)
+#Tools.dict2file(c,"path_density.txt")
+#Tools.dict2file(h,"path_durations.txt")
 
 
 
