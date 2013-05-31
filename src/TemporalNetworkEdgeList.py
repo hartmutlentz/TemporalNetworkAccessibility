@@ -3,7 +3,11 @@
 
 import random
 import scipy as sc, numpy as np
-import networkx as nx # Optional, for CM model
+try:
+    import networkx as nx # Optional, for CM model
+except ImportError:
+    print "Networkx-Package is not installed. Configuration-Model (CM) not available."
+    
 
 
 class TemporalEdgeList():
