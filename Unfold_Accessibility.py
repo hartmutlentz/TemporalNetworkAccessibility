@@ -14,17 +14,25 @@ the_file='edgelists/sociopatterns_hypertext.dat'
 At=AdjMatrixSequence(the_file,directed=True,write_label_file=False)
 
 # compute accessibility
-#c=At.unfold_accessibility()
-#h=Tools.cdf2histogram(c)
-#Tools.dict2file(c,"path_density.txt")
-#Tools.dict2file(h,"path_durations.txt")
+c=At.unfold_accessibility()
+# derivative of accessibility profile
+h=Tools.cdf2histogram(c)
+
+# write the results to files
+Tools.dict2file(c,"path_density.txt")
+Tools.dict2file(h,"path_durations.txt")
 
 
+
+### ALTERNATIVELY: read a temporal edge list and randomize it
+### Details about randomization techniques are in:
+### [1] Lentz et al, Phys. Rev. Lett. 110 (2013)
+###
 
 # import a temporal network edgelist for randomization
 #E=TemporalEdgeList(the_file,directed=True)
 #E.LST()
-#E.write("Test_LST.txt")
+#E.write("Randomized_edges_LST.txt")
 
 
 
