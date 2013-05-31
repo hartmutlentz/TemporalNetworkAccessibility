@@ -25,8 +25,8 @@ Tools.dict2file(h,"path_durations.txt")
 
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
-### Details about randomization techniques are in:
-### [1] Lentz et al, Phys. Rev. Lett. 110 (2013)
+### Details about randomization techniques are in Supplementary Material of
+### [1] Lentz et al, Phys. Rev. Lett. 110, 118701 (2013) 
 ###
 
 # import a temporal network edgelist for randomization
