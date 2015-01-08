@@ -296,13 +296,6 @@ class AdjMatrixSequence(list):
         #else:
         #    raise NotImplementedError, "Network is already undirected."
 
-    def to_dok(self):
-        """ converts every matrix to dok type as needed
-            for map-reduce-processing.
-        """
-        for i in range(len(self)):
-            self[i] = self[i].todok()
-
     def clustering_matrix2vector(self, in_file):
         """ Reads file and returns vector from matrix """
         C = mmread(in_file)
@@ -322,19 +315,6 @@ class AdjMatrixSequence(list):
         n = len(pool)
         indices = sorted(random.randrange(n) for i in xrange(r))
         return tuple(pool[i] for i in indices)
-
-    def __consume(iterator, n):
-        """ Advance the iterator n-steps ahead. If n is none, consume entirely.
-            alternative Generator.next()
-            usage: x=my_gnerator; next(x,'finished')
-        """
-        # Use functions that consume iterators at C speed.
-        if n is None:
-            # feed the entire iterator into a zero-length deque
-            collections.deque(iterator, maxlen=0)
-        else:
-            # advance to the empty slice starting at position n
-            next(itertools.islice(iterator, n, n), None)
 
     def clustering_matrix(self, limit=None, random_iterations=False):
         """ Computes the matrix of clustering coefficients of
