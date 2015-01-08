@@ -46,6 +46,31 @@ class AdjMatrixSequence(list):
             self.as_undirected()
         self.number_of_nodes = scipy.shape(self[0])[0]
 
+    def __scipy_version_for_large_matrices(self, ref="0.14.0"):
+        """ Checks if the installed version of Scipy is at least ref.
+            This is necessary for handling very large sparse matrices.
+            For scipy versions < 0.14.0. the variables indptr and indices are
+            stored as int32. Thus te number of non-zero entries is restricted to
+            2^31 \sim 10^9 elements.
+            Returns True, if installed Version > ref. False otherwise.
+        """
+        # split versions into numbers
+        x = scipy.__version__.split(".")
+        y = ref.split(".")
+        
+        # compare adjusted lengths
+        if len(x)==len(y): return x >= y
+        elif len(x) < len(y): return x >= y[:len(x)]
+        else: return x[:len(y)] >= y
+    
+    def info_scipy_version(self):
+        """ Print information about scipy version and maximum Matrix size """
+        if self.__scipy_version_for_large_matrices():
+            print ("Scipy version can handle matrices with more than " +
+                   "2^31 nonzero elements.")
+        else:
+            print "Number of nonzero elements is restricted to 2^31."
+
     def groupByDays(self, edges):
         """ returns list of tupels: [(d,[(u,v),...]),...] """
         dct = defaultdict(list)

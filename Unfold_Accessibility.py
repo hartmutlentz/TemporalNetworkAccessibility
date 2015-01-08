@@ -11,9 +11,11 @@ import Tools
 # import an edgelist as sequence of adjacency matrices
 the_file = 'edgelists/sociopatterns_hypertext.dat'
 At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
+#At.info_scipy_version()
 
 # compute accessibility
 c = At.unfold_accessibility()
+
 # derivative of accessibility profile
 h = Tools.cdf2histogram(c)
 
