@@ -1,12 +1,27 @@
 TemporalNetworkAccessibility
 ============================
+Provides classes used for computing the results of the Paper
+*Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks*, Lentz et al., Phys. Rev. Lett., 2013.
 
-Provides classes for Adjacency Matrix Sequences and Temporal Network Edgelists.
+You can compute the Accessibility Matrix of a temporal netwotk like this:
+```python
+A = AdjMatrixSequence(<your input file>)
+# This generates a list of adjacency matrices, i.e. a temporal network in matrices representation.
+```
+
+c = A.unfold_accessibility()
+# This computes eqn. (4) in the Paper, that is $ \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i) $ step by step and returns a dictionary containing the path density (as black line in Fig. 2).
+
+
+
+
 An example of usage is shown in 'Unfold_Accessibility.py'.
 
 
 
-Required packages:
+
+Required Software/packages:
+- Python 2.7 (should run on 2.6, too)
 - scipy
 - numpy
 - Networkx package (optional, required for the configuration model).
@@ -19,10 +34,10 @@ These matrices are restricted to 2^31 nonzero entries, regardless of the used me
 
 Datasets:
 Exemplary temporal network datasets are provided in the 'edgelists' folder.
-The file 'edgelists/sexual_contacts.dat' is from [1] and the file 'edgelists/sociopatterns_hypertext.dat' ca be downloaded from sociopatterns.org [2].
+The file 'edgelists/sexual_contacts.dat' is from [1] and the file 'edgelists/sociopatterns_hypertext.dat' can be downloaded from sociopatterns.org [2].
 Both files were also used in [3].
 
 [1]	L. E. C. Rocha, F. Liljeros, and P. Holme, Proc. Natl. Acad. Sci. U.S.a. 107, 5706 (2010).
-[2]	L. Isella, J. Stehlé, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).
+[2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).
 [3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).
 
