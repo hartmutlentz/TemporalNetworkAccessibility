@@ -5,7 +5,9 @@ Provides classes used for computing the results of the Paper
 Lentz et al., Phys. Rev. Lett., 2013.
 
 ## Using the Software
-You can compute the Accessibility Matrix of a temporal netwotk like this:
+To compute the results of the paper, you only need the class *AdjMatrixSequence*.
+You can compute the Accessibility Matrix of a temporal netwotk following these steps:
+
 ### Step 1
 ```python
 A = AdjMatrixSequence("<your input file>")
@@ -18,22 +20,31 @@ c = A.unfold_accessibility()
 ```
 This computes eqn. (4) in the Paper, that is  
 $ \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i)$,  
-step by step and returns a dictionary containing the path density (as black line in Fig. 2).
+step by step and returns a dictionary containing the path density. In the paper [3] this is the black line in Fig. 2 for example.
 
 ### Step 3
 ```python
 h = Tools.cdf2histogram(c)
 ```
-This returns the numerical derivative of the path-density, which is the shortest-path-duration-distribution.
+This returns the numerical derivative of the path-density, which is the shortest-path-duration-distribution. In the paper [3] this is the red line in Fig. 2 for example.
 
 ### Step 4
 ```python
 Tools.dict2file(c, "path_density.txt")
 Tools.dict2file(h, "path_durations.txt")
 ```
-This writes the generates data to files, so you can plot it using gnuplot, Excel or you favorite plotiing software.
+This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotiing software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
 
 A working example is shown in the file 'Unfold_Accessibility.py'.
+
+### Additional functionality
+The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail in my PhD thesis [4].
+
+
+E = TemporalEdgeList(the_file,directed=False)
+E.RE()
+E.write("Randomized_edges_LST.txt")
+
 
 ## Required Software/packages:
 - Python 2.7 (should run on 2.6, too)
@@ -53,4 +64,4 @@ Both files were also used in [3].
 [1]	L. E. C. Rocha, F. Liljeros, and P. Holme, Proc. Natl. Acad. Sci. U.S.a. 107, 5706 (2010).  
 [2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).  
 [3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).
-
+[4] H. H. K. Lentz, PhD Thesis, [Humboldt-University of Berlin](http://edoc.hu-berlin.de/dissertationen/lentz-hartmut-2013-11-06/METADATA/abstract.php?id=40377) or [GitHub](https://github.com/hartmutlentz/Thesis)
