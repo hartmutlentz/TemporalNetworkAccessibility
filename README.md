@@ -1,7 +1,7 @@
 TemporalNetworkAccessibility
 ============================
-Provides classes used for computing the results of the Paper
-*Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks*, Lentz et al., Phys. Rev. Lett., 2013.
+Provides classes used for computing the results of the Paper  
+**Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**, Lentz et al., Phys. Rev. Lett., 2013.
 
 You can compute the Accessibility Matrix of a temporal netwotk like this:
 ```python
