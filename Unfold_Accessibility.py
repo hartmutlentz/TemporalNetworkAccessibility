@@ -32,4 +32,4 @@ Tools.dict2file(h, "path_durations.txt")
 # import a temporal network edgelist for randomization
 # E=TemporalEdgeList(the_file,directed=False)
 # E.RE()
-# E.write("Randomized_edges_LST.txt")
+# E.write("Randomized_edges_RE.txt")
