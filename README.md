@@ -3,15 +3,15 @@
 Provides classes used for computing the results of the Paper  
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**, Lentz et al., Phys. Rev. Lett., 2013.
 
+## Using the Software
 You can compute the Accessibility Matrix of a temporal netwotk like this:
-
-## Step 1
+### Step 1
 ```python
 A = AdjMatrixSequence(<your input file>)
 ```
 This generates a list of adjacency matrices, i.e. a temporal network in matrices representation.
 
-## Step 2
+### Step 2
 ```python
 c = A.unfold_accessibility()
 ```
