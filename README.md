@@ -12,7 +12,7 @@ You can compute the Accessibility Matrix of a temporal netwotk following these s
 ```python
 A = AdjMatrixSequence("<your input file>")
 ```
-This generates a list of adjacency matrices, i.e. a temporal network in matrices representation.
+This generates a list of adjacency matrices, i.e. a temporal network in matrices representation. Additionally, more options could be used in this step. You can use option *directed=True*, if your network is directed (default is undirected). The option *write_label_file=True* (default is *False*) can be used, if you have nodes names that are not "matrix label friendly", as names for example. If *write_label_file=True*, an additional file is written into the woring directory, which contains the old and new node labels.
 
 ### Step 2
 ```python
@@ -44,7 +44,8 @@ You can create a temporal edgelist like this:
 ```python
 E = TemporalEdgeList("<your input file>")
 ```
-If you want to randomize it, for example using the *randomized edges* (RE) model, you simply use
+You can add the option *directed=True*, if your network is directed.
+If you want to randomize the network, for example using the *randomized edges* (RE) model, you simply use
 ```python
 E.RE()
 ```
