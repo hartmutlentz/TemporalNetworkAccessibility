@@ -1,7 +1,8 @@
 # TemporalNetworkAccessibility
 
 Provides classes used for computing the results of the Paper  
-**Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**, Lentz et al., Phys. Rev. Lett., 2013.
+**Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
+Lentz et al., Phys. Rev. Lett., 2013.
 
 ## Using the Software
 You can compute the Accessibility Matrix of a temporal netwotk like this:
@@ -49,7 +50,7 @@ The file 'edgelists/sexual_contacts.dat' is from [1] and the file 'edgelists/soc
 Both files were also used in [3].
 
 ## Literature
-[1]	L. E. C. Rocha, F. Liljeros, and P. Holme, Proc. Natl. Acad. Sci. U.S.a. 107, 5706 (2010).
-[2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).
+[1]	L. E. C. Rocha, F. Liljeros, and P. Holme, Proc. Natl. Acad. Sci. U.S.a. 107, 5706 (2010).  
+[2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).  
 [3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).
 
