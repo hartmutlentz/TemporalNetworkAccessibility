@@ -5,7 +5,7 @@ Provides classes used for computing the results of the Paper
 
 You can compute the Accessibility Matrix of a temporal netwotk like this:
 
-Step 1
+# Step 1
 ```python
 A = AdjMatrixSequence(<your input file>)
 ```
