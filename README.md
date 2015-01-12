@@ -8,7 +8,7 @@ Lentz et al., Phys. Rev. Lett., 2013.
 You can compute the Accessibility Matrix of a temporal netwotk like this:
 ### Step 1
 ```python
-A = AdjMatrixSequence(<your input file>)
+A = AdjMatrixSequence("<your input file>")
 ```
 This generates a list of adjacency matrices, i.e. a temporal network in matrices representation.
 
