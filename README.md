@@ -15,7 +15,7 @@ This generates a list of adjacency matrices, i.e. a temporal network in matrices
 ```python
 c = A.unfold_accessibility()
 ```
-This computes eqn. (4) in the Paper, that is $ \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i) $ step by step and returns a dictionary containing the path density (as black line in Fig. 2).
+This computes eqn. (4) in the Paper, that is $$ \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i) $$ step by step and returns a dictionary containing the path density (as black line in Fig. 2).
 
 
 An example of usage is shown in 'Unfold_Accessibility.py'.
