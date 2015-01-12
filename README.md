@@ -38,13 +38,20 @@ This writes the generated data to txt-files, so you can plot it using gnuplot, E
 A working example is shown in the file 'Unfold_Accessibility.py'.
 
 ### Additional functionality
-The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail in my PhD thesis [4].
+The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail described in my PhD thesis [4].
 
-
-E = TemporalEdgeList(the_file,directed=False)
+You can create a temporal edgelist like this:
+```python
+E = TemporalEdgeList("<your input file>")
+```
+If you want to randomize it, for example using the *randomized edges* model, you simply use
+```python
 E.RE()
+```
+Finally, you can write the new edgelist into a textfile like this:
+```python
 E.write("Randomized_edges_LST.txt")
-
+```
 
 ## Required Software/packages:
 - Python 2.7 (should run on 2.6, too)
@@ -63,5 +70,5 @@ Both files were also used in [3].
 ## Literature
 [1]	L. E. C. Rocha, F. Liljeros, and P. Holme, Proc. Natl. Acad. Sci. U.S.a. 107, 5706 (2010).  
 [2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).  
-[3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).
+[3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).  
 [4] H. H. K. Lentz, PhD Thesis, [Humboldt-University of Berlin](http://edoc.hu-berlin.de/dissertationen/lentz-hartmut-2013-11-06/METADATA/abstract.php?id=40377) or [GitHub](https://github.com/hartmutlentz/Thesis)
