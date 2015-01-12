@@ -44,13 +44,13 @@ You can create a temporal edgelist like this:
 ```python
 E = TemporalEdgeList("<your input file>")
 ```
-If you want to randomize it, for example using the *randomized edges* model, you simply use
+If you want to randomize it, for example using the *randomized edges* (RE) model, you simply use
 ```python
 E.RE()
 ```
 Finally, you can write the new edgelist into a textfile like this:
 ```python
-E.write("Randomized_edges_LST.txt")
+E.write("Randomized_edges_RE.txt")
 ```
 
 ## Required Software/packages:
