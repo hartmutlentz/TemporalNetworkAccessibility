@@ -16,9 +16,11 @@ This generates a list of adjacency matrices, i.e. a temporal network in matrices
 c = A.unfold_accessibility()
 ```
 This computes eqn. (4) in the Paper, that is 
+$$
 \begin{equation}
 \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i)
 \end{equation}
+$$
 step by step and returns a dictionary containing the path density (as black line in Fig. 2).
 
 
