@@ -14,28 +14,28 @@ import random
 
 class AdjMatrixSequence(list):
     """
-    list of sparse matrixes
+    list of sparse matrices
 
     class inherits from list.
     the constructor expects filename of u,v,w,d-edgelist
 
     it constructs a list, where each entry is
     a sparse matrix (default: csr)
-    the matrices in the list are ordered by day
+    the matrices in the list are ordered by time.
 
-    the indices of the matrix represent the nodes, but
-    nodes are reindexed to [0..number_of_nodes]
+    the indices of the matrix represent the nodes. Nodes are reindexed to
+    [0..number_of_nodes]
     """
     def __init__(self, edgelist_fname, directed, write_label_file=True,
-                 columns=(0, 1, 2), firstday=None, lastday=None):
+                 columns=(0, 1, 2), firsttime=None, lasttime=None):
         list.__init__(self)
         #if edgelist_fname == fs.dataPath("D_sf_uvwd_cmpl.txt"):
         #    self.first_day = 2555 #2008-2010
         #else:
         #    self.first_day = 0#1825 #2006-2010
         #self.last_day = 9#3650
-        self.first_day = firstday
-        self.last_day = lastday
+        self.first_day = firsttime
+        self.last_day = lasttime
         self.fname = edgelist_fname
         self.cols = columns
         self.label_file = write_label_file
@@ -71,7 +71,7 @@ class AdjMatrixSequence(list):
         else:
             print "Number of nonzero elements is restricted to 2^31."
 
-    def groupByDays(self, edges):
+    def groupByTime(self, edges):
         """ returns list of tupels: [(d,[(u,v),...]),...] """
         dct = defaultdict(list)
         for u, v, d in edges:
@@ -227,7 +227,7 @@ class AdjMatrixSequence(list):
         return C
 
     def daily_activity(self):
-        """ Dict {day:matrix_density} """
+        """ Dict {time:matrix_density} """
         da = {}
         n = float(self.number_of_nodes)
         norma = n * (n-1.0)
@@ -393,7 +393,7 @@ class AdjMatrixSequence(list):
         """ creates list of sparse matrices from input file """
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
 
-        # first and last days
+        # first and last times
         _, _, days = loadtxt(self.fname, dtype=int, usecols=self.cols,
                              unpack=True)
         if not self.first_day:
@@ -401,7 +401,7 @@ class AdjMatrixSequence(list):
         if not self.last_day:
             self.last_day = max(days)
 
-        # use only days between FIRSTDAY and LASTDAY
+        # use only times between firsttime and lasttime
         edges = [(u, v, d) for u, v, d in edges if
                  (d >= self.first_day) and (d <= self.last_day)]
 
@@ -416,7 +416,7 @@ class AdjMatrixSequence(list):
         # reindex using this dictionary
         edges = [(re_dct[u], re_dct[v], d) for u, v, d in edges]
 
-        edges = self.groupByDays(edges)
+        edges = self.groupByTime(edges)
 
         # the actual construction of the sparse matrices
         mx_index = len(re_dct)
