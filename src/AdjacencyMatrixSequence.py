@@ -462,10 +462,41 @@ class AdjMatrixSequence(list):
         else:
             return cumu
 
+    def unfold_accessibility_memory_efficient(self):
+        """ computes path density step by step for single nodes. """
+        all_paths = zeros(len(self), dtype=int)
+        
+        for node in range(self.number_of_nodes):
+            print node
+            all_paths += self.unfold_accessibility_single_node(node)
+
+        return all_paths
+
+    def unfold_accessibility_single_node(self, start):
+        """ Accessibility of one node. Returns a numpy vector containing
+            the number of nonzeros for every timestep.
+        """
+        # init
+        x = sp.lil_matrix((self.number_of_nodes, 1), dtype=np.int32)
+        x[start, 0] = 1
+        x = x.transpose()
+        #D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        
+        # time vector
+        paths = zeros(len(self), dtype=int)
+        
+        for t in range(1, len(self)):
+            #x = x * (self[t] + D)
+            x = x + x * self[t]
+            paths[t] += x.nnz
+
+        return paths
 
 if __name__ == "__main__":
     from pprint import pprint
-
-    At = AdjMatrixSequence("sociopatterns_hypertext.dat", directed=False)
+    
+    At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
+                           directed=False)
     print len(At)
-    c = At.unfold_accessibility()
+    c = At.unfold_accessibility_memory_efficient()
+    pprint(c)
