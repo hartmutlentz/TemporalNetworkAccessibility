@@ -454,7 +454,8 @@ class AdjMatrixSequence(list):
         M = M.astype('bool')
         M = M.astype('i')
 
-    def unfold_accessibility(self, return_accessibility_matrix=False):
+    def unfold_accessibility(self, verbose=True,\
+            return_accessibility_matrix=False):
         """ Unfold accessibility storing path density.
 
         """
@@ -464,7 +465,8 @@ class AdjMatrixSequence(list):
         cumu = [P.nnz]
 
         for i in range(1, len(self)):
-            print 'unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz
+            if verbose:
+                print 'unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz
             self.bool_int_matrix(P)
             cumu.append(P.nnz)
             try:
