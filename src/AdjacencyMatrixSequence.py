@@ -10,6 +10,7 @@ from random import sample
 from collections import defaultdict
 from scipy.io import mmread, mmwrite, loadmat, savemat
 import random
+import copy
 
 
 class AdjMatrixSequence(list):
@@ -40,6 +41,14 @@ class AdjMatrixSequence(list):
         if not self.is_directed:
             self.as_undirected()
         self.number_of_nodes = scipy.shape(self[0])[0]
+        
+    def copy(self):
+        """ alias """
+        return copy.copy(self)
+    
+    def deepcopy(self):
+        """ alias """
+        return copy.deepcopy(self)
 
     def __scipy_version_for_large_matrices(self, ref="0.14.0"):
         """ Checks if the installed version of Scipy is at least ref.
