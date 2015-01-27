@@ -29,11 +29,6 @@ class AdjMatrixSequence(list):
     def __init__(self, edgelist_fname, directed, write_label_file=True,
                  columns=(0, 1, 2), firsttime=None, lasttime=None):
         list.__init__(self)
-        #if edgelist_fname == fs.dataPath("D_sf_uvwd_cmpl.txt"):
-        #    self.first_day = 2555 #2008-2010
-        #else:
-        #    self.first_day = 0#1825 #2006-2010
-        #self.last_day = 9#3650
         self.first_day = firsttime
         self.last_day = lasttime
         self.fname = edgelist_fname
@@ -236,13 +231,28 @@ class AdjMatrixSequence(list):
             da[i] = float(self[i].nnz) / norma
 
         return da
+    
+    def shift_start_time(self, new_start_time, return_copy=False):
+        """ Returns list of adjacency matrices with new ordering, beginning with
+            Index new_start_time using periodic boundary conditions.
+        """
+        assert new_start_time <= len(self)-1, \
+            'new_start_time must be in network observation time.'
+        x = self[new_start_time:]
+        x.extend(self[:new_start_time])
+    
+        if return_copy:
+            return x
+        else:
+            self[:] = x[:]
+            return
 
     def GST(self, return_copy=False):
         # alias
         self.time_shuffled(return_copy)
 
     def time_shuffled(self, return_copy=False):
-        """
+        """ Shuffle times occurence times for each snapshot.
 
         """
         if return_copy:
@@ -466,6 +476,7 @@ class AdjMatrixSequence(list):
 if __name__ == "__main__":
     from pprint import pprint
 
-    At = AdjMatrixSequence("sociopatterns_hypertext.dat", directed=False)
+    At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat", directed=False)
     print len(At)
-    c = At.unfold_accessibility()
+    At.shift_start_time(0)
+    #c = At.unfold_accessibility()
