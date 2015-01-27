@@ -247,13 +247,14 @@ class AdjMatrixSequence(list):
         """
         assert new_start_time <= len(self)-1, \
             'new_start_time must be in network observation time.'
-        x = self[new_start_time:]
-        x.extend(self[:new_start_time])
-    
         if return_copy:
+            x = self.copy()
+            x.extend(self[:new_start_time])
+            del x[:new_start_time]
             return x
         else:
-            self[:] = x[:]
+            self.extend(self[:new_start_time])
+            del self[:new_start_time]
             return
 
     def GST(self, return_copy=False):
