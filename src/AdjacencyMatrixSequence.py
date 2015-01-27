@@ -230,6 +230,52 @@ class AdjMatrixSequence(list):
 
         return C
 
+    def coarse_grain(self, aggregate, return_copy=False):
+        """ coarse grain the list, i.e. partial aggregation of the network.
+            aggregate - gives the number of matrices to be summed up.
+            In numbers to get the idea:
+            
+                coarse_grain([1,2,3,4,5,6], 2) = [1+2, 3+4, 5+6].
+             or coarse_grain([1,2,3,4,5,6], 3) = [1+2+3, 4+5+6].
+                
+            Finite Size effects are ignored! Thus
+            coarse_grain([1,2,3,4,5,6], 2) gives the same result as
+            coarse_grain([1,2,3,4,5,6,7], 2), since the last element cannot
+            be aggregated in a 2-aggregate.
+        """
+        def main_loop(x):
+            new_list = []
+            while x:
+                partial = []
+                for i in range(aggregate):
+                    try:
+                        partial.append(x.pop(0))
+                    except IndexError:
+                        return new_list
+                new_list.append(sum(partial))
+            return new_list
+    
+        assert aggregate <= len(self),\
+            'Aggregate must contain less snapshots then observation time steps'
+        
+        if return_copy:
+            x = self.copy()
+        else:
+            x = self
+
+        new_list = main_loop(x)
+        
+        del x[:]
+        x.extend(new_list)
+        
+        for A in x:
+            self.bool_int_matrix(A)
+        
+        if return_copy:
+            return x
+        else:
+            return
+
     def daily_activity(self):
         """ Dict {time:matrix_density} """
         da = {}
@@ -451,8 +497,9 @@ class AdjMatrixSequence(list):
 
     def bool_int_matrix(self, M):
         """ Returns matrix with only np.int64: ones. """
-        M = M.astype('bool')
-        M = M.astype('i')
+        #M = M.astype('bool')
+        #M = M.astype('i')
+        M.data = np.ones_like(M.data)
 
     def unfold_accessibility(self, verbose=True,\
             return_accessibility_matrix=False):
@@ -520,6 +567,7 @@ if __name__ == "__main__":
     At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
                            directed=False)
 
-    print len(At)
-    At.shift_start_time(0)
+    print len(At), At[0]
+    At.coarse_grain(184)
+    print len(At), At[0]
     #c = At.unfold_accessibility()
