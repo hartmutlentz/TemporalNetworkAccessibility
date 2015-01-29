@@ -41,9 +41,9 @@ Tools.dict2file(h, "path_durations.txt")
 ```
 This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotzing software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
 
-**A note on normalization.** Path-density (```c```) and the distribution of shortest path durations (```h```) are not normalized at this point. Consequently, you should normalize ```c``` by the number of nodes squared and ```h``` to unity. As noted in the paper, ```c``` is not necessarily normalized to unity.
+A working example with steps 1—4 is shown in the file 'Unfold_Accessibility.py'.
 
-A working example is shown in the file 'Unfold_Accessibility.py'.
+**A note on normalization.** Path-density (```c```) and the distribution of shortest path durations (```h```) are not normalized at this point. Consequently, you should normalize ```c``` by the number of nodes squared and ```h``` to unity. As noted in the paper, ```c``` is not necessarily normalized to unity.
 
 ### Additional functionality
 The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail described in my PhD thesis [4].
