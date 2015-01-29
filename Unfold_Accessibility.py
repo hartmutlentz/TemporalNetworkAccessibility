@@ -2,6 +2,7 @@
 #
 #
 import sys
+import numpy as np
 sys.path.append('./src')
 from AdjacencyMatrixSequence import AdjMatrixSequence
 from TemporalNetworkEdgeList import TemporalEdgeList
@@ -17,12 +18,11 @@ At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
 c = At.unfold_accessibility()
 
 # derivative of accessibility profile
-h = Tools.cdf2histogram(c)
+h = np.gradient(c)
 
 # write the results to files
 Tools.dict2file(c, "path_density.txt")
 Tools.dict2file(h, "path_durations.txt")
-
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
 ### Details about randomization techniques are in Supplementary Material of
