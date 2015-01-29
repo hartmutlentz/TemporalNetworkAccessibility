@@ -30,7 +30,7 @@ step by step and returns a dictionary containing the path density. In the paper 
 
 ### Step 3
 ```python
-h = Tools.cdf2histogram(c)
+h = np.gradient(c)
 ```
 This returns the numerical derivative of the path-density, which is the shortest-path-duration-distribution. In the paper [3] this is the red line in Fig. 2 for example.
 
@@ -39,7 +39,9 @@ This returns the numerical derivative of the path-density, which is the shortest
 Tools.dict2file(c, "path_density.txt")
 Tools.dict2file(h, "path_durations.txt")
 ```
-This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotiing software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
+This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotzing software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
+
+**A note on normalization.** Path-density (```c```) and the distribution of shortest path durations (```h```) are not normalized at this point. Consequently, you should normalize ```c``` by the number of nodes squared and ```h``` to unity. As noted in the paper, ```c``` is not necessarily normalized to unity.
 
 A working example is shown in the file 'Unfold_Accessibility.py'.
 
