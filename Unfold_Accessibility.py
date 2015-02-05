@@ -10,12 +10,14 @@ import Tools
 
 
 # import an edgelist as sequence of adjacency matrices
+#the_file = 'edgelists/pig_trade_11-14_uvdw.dat'
 the_file = 'edgelists/sociopatterns_hypertext.dat'
-At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
+At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 #At.info_scipy_version()
 
 # compute accessibility
-c = At.unfold_accessibility()
+c = At.unfold_accessibility_memory_efficient()
+#c = At.unfold_accessibility()
 
 # derivative of accessibility profile
 h = np.gradient(c)

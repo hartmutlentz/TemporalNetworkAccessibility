@@ -301,7 +301,6 @@ class AdjMatrixSequence(list):
         else:
             self.extend(self[:new_start_time])
             del self[:new_start_time]
-            return
 
     def GST(self, return_copy=False):
         # alias
@@ -536,7 +535,8 @@ class AdjMatrixSequence(list):
         all_paths = zeros(len(self), dtype=int)
         
         for node in range(self.number_of_nodes):
-            print node
+            print 'Computing accessibility for node ', node+1,\
+                    ' of ', self.number_of_nodes
             all_paths += self.unfold_accessibility_single_node(node)
 
         return all_paths
@@ -546,18 +546,19 @@ class AdjMatrixSequence(list):
             the number of nonzeros for every timestep.
         """
         # init
-        x = sp.lil_matrix((self.number_of_nodes, 1), dtype=np.int32)
-        x[start, 0] = 1
-        x = x.transpose()
-        #D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        x = sp.coo_matrix(([1],([0],[start])),\
+            shape=(1, self.number_of_nodes), dtype=int)
+        x = x.tocsr()
         
         # time vector
         paths = zeros(len(self), dtype=int)
         
+        x = x + x * self[0]
+        paths[0] = x.nnz
+        
         for t in range(1, len(self)):
-            #x = x * (self[t] + D)
-            x = x + x * self[t]
             paths[t] += x.nnz
+            x = x + x * self[t]
 
         return paths
 

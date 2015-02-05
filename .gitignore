@@ -2,3 +2,19 @@
 .DS_Store
 
 *.pyc
+
+*.plist
+
+*.dtbin
+
+unfolding.dgraph/Contents/PkgInfo
+
+unfolding.dgraph/QuickLook/Preview.png
+
+unfolding.dgraph/QuickLook/Thumbnail.png
+
+path_density_matrix.txt
+
+path_density.txt
+
+path_durations.txt
