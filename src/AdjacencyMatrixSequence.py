@@ -514,12 +514,12 @@ class AdjMatrixSequence(list):
             if verbose:
                 print 'unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz
             self.bool_int_matrix(P)
-            cumu.append(P.nnz)
             try:
                 P = P + P * self[i]
             except:
                 print 'Break at t = ', i
                 break
+            cumu.append(P.nnz)
         else:
             print '---> Unfolding complete.'
 
@@ -550,17 +550,16 @@ class AdjMatrixSequence(list):
             shape=(1, self.number_of_nodes), dtype=int)
         x = x.tocsr()
         
-        # time vector
-        paths = zeros(len(self), dtype=int)
-        
+        # these 2 lines are not in the for-loop to be
+        # optically consistent with the matrix version.
         x = x + x * self[0]
-        paths[0] = x.nnz
+        cumu = [x.nnz]
         
         for t in range(1, len(self)):
-            paths[t] += x.nnz
             x = x + x * self[t]
+            cumu.append(x.nnz)
 
-        return paths
+        return np.array(cumu)
 
 if __name__ == "__main__":
     from pprint import pprint

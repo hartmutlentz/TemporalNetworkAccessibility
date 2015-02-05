@@ -16,8 +16,8 @@ At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 #At.info_scipy_version()
 
 # compute accessibility
-c = At.unfold_accessibility_memory_efficient()
-#c = At.unfold_accessibility()
+#c = At.unfold_accessibility_memory_efficient()
+c = At.unfold_accessibility()
 
 # derivative of accessibility profile
 h = np.gradient(c)
