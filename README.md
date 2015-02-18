@@ -28,6 +28,12 @@ This computes eqn. (4) in the Paper, that is
 $ \mathcal{P}_n = \bigwedge _i (\mathbf{1} \vee \mathbf{A}_i)$,  
 step by step and returns a dictionary containing the path density. In the paper [3] this is the black line in Fig. 2 for example.
 
+**Memory efficience**. When using ```A.unfold_accessibility()``` like above, computations are done using matrices. These matrices can become huge for large networks. To save memory, you can use the following variant:
+```python
+c = A.unfold_accessibility_memory_efficient()
+```
+This variant can be slower, but works also for large networks. It decomposes the matrices into vectors and computes the solution for one vector at a time. (This method can be parallelized (to be done)).
+
 ### Step 3
 ```python
 h = np.gradient(c)
