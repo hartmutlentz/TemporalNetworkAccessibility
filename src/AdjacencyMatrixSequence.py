@@ -185,7 +185,7 @@ class AdjMatrixSequence(list):
         return float(paths) / n**2
 
     def static_path_density(self):
-        """ Returns dict. {Aggregation depth: static path density}
+        """ Returns list. [index=Aggregation depth: static path density]
 
         """
         pd = []

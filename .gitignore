@@ -20,3 +20,7 @@ path_density.txt
 path_durations.txt
 
 path_density_v.txt
+
+*.txt
+
+edgelists/pig_trade_11-14_uvdw.dat
