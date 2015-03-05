@@ -10,21 +10,22 @@ import Tools
 
 
 # import an edgelist as sequence of adjacency matrices
-#the_file = 'edgelists/pig_trade_11-14_uvdw.dat'
-the_file = 'Randomized_RE.txt'
+the_file = 'edgelists/pig_trade_11-14_uvdw.dat'
+#the_file = 'Randomized_RE.txt'
 At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 #At.info_scipy_version()
 
 # compute accessibility
-c = At.unfold_accessibility_memory_efficient()
+c = At.static_path_density()
+#c = At.unfold_accessibility_memory_efficient()
 #c = At.unfold_accessibility()
 
 # derivative of accessibility profile
 h = np.gradient(c)
 
 # write the results to files
-Tools.dict2file(c, "path_density_RE.txt")
-Tools.dict2file(h, "path_durations_RE.txt")
+Tools.dict2file(c, "path_density_Static.txt")
+Tools.dict2file(h, "path_durations_static.txt")
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
 ### Details about randomization techniques are in Supplementary Material of

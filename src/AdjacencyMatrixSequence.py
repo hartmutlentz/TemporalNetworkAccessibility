@@ -184,12 +184,12 @@ class AdjMatrixSequence(list):
 
         return float(paths) / n**2
 
-    def static_path_density(self):
+    def static_path_density(self, ende=None):
         """ Returns list. [index=Aggregation depth: static path density]
 
         """
         pd = []
-        for i, Cn in enumerate(self.step_by_step_aggregation()):
+        for i, Cn in enumerate(self.step_by_step_aggregation(ende)):
             print 'Static path density. Step ', i
             pd.append(self.path_density_of_A(Cn))
 
