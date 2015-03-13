@@ -276,11 +276,34 @@ class AdjMatrixSequence(list):
         else:
             return
 
-    def daily_activity(self):
+    def node_activity_series(self, norm=True):
+        """ returns the number of active nodes for each snapshot. """
+        active = {}
+        n = float(self.number_of_nodes)
+        if norm:
+            norma = float(n)
+        else:
+            norma = 1
+
+        for i in range(len(self)):
+            outs = sp.coo_matrix(self[i].sum(axis=1))
+            ins = sp.coo_matrix(self[i].sum(axis=0))
+            nodes1 = set(outs.row)
+            nodes2 = set(ins.col)
+
+            nodes = nodes1.union(nodes2)
+            active[i] = len(nodes) / norma
+            
+        return active
+    
+    def edge_activity_series(self, norm=True):
         """ Dict {time:matrix_density} """
         da = {}
         n = float(self.number_of_nodes)
-        norma = n * (n-1.0)
+        if norm:
+            norma = n * (n-1.0)
+        else:
+            norma = 1.0
 
         for i in range(len(self)):
             da[i] = float(self[i].nnz) / norma
