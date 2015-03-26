@@ -160,6 +160,55 @@ class AdjMatrixSequence(list):
         else:
             return lcc_size / float(self.number_of_nodes)
 
+    def average_path_length(self, M, diameter):
+        """ returns average pathlength of a snapshot, where all path
+        lengths > 1 are considered.
+        """
+        x = [(M**i).nnz for i in range(2, diameter+1)]
+        
+        return np.mean(x)
+
+    def long_paths_per_snapshot(self, max_path_length):
+        """ Computes the number of paths longer than 1 in each snapshot.
+            This issue has been discussed in
+                Grindrod et al.
+                *Communicability across evolving networks*
+                Phys. Rev. E, 2011.
+        
+            Matrices in At should be corrected, if many entries are > 1.
+            max_path_length should be the diameter of the aggregated network.
+        """
+        d = {}
+        for i in range(len(self)):
+            print i
+            p = self.average_path_length(self[i], max_path_length)
+            #if p > 1:
+            d[i] = p
+
+        return d
+
+    def long_path_correction(self, diameter):
+        """ replace A_i by \sum _{i=1} ^diameter A_i. This takes into account
+            paths of length > 1 in each snapshot.
+            See
+                Grindrod et al.
+                *Communicability across evolving networks*
+                Phys. Rev. E, 2011.
+        """
+        for i in range(len(self)):
+            print "Correcting snapshots for long paths. Step ", i
+            M = self[i].copy()
+            
+            for j in range(2, diameter):
+                M = M + self[i]**j
+            
+            self[i] = M
+    
+        print "---> paths up to length ", diameter, \
+            " are now considered in snapshots."
+    
+        return
+
     def LCCs(self):
         """ returns information about the size of the LCC and the mean degree
             of the snapshots.
