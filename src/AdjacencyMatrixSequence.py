@@ -602,16 +602,22 @@ class AdjMatrixSequence(list):
         else:
             return cumu
 
-    def unfold_accessibility_memory_efficient(self):
+    def unfold_accessibility_memory_efficient(self, return_ranges=False):
         """ computes path density step by step for single nodes. """
         all_paths = zeros(len(self), dtype=int)
+        ranges = {}
         
         for node in range(self.number_of_nodes):
             print 'Computing accessibility for node ', node+1,\
                     ' of ', self.number_of_nodes
-            all_paths += self.unfold_accessibility_single_node(node)
+            single_node_SI = self.unfold_accessibility_single_node(node)
+            all_paths += single_node_SI
+            ranges[node] = single_node_SI[-1]
 
-        return all_paths
+        if return_ranges:
+            return (all_paths, ranges)
+        else:
+            return all_paths
 
     def unfold_accessibility_single_node(self, start):
         """ Accessibility of one node. Returns a numpy vector containing
