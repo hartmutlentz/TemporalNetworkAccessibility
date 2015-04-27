@@ -7,24 +7,21 @@ sys.path.append('./src')
 from AdjacencyMatrixSequence import AdjMatrixSequence
 from TemporalNetworkEdgeList import TemporalEdgeList
 import Tools
-
+import cPickle as pickle
 
 # import an edgelist as sequence of adjacency matrices
-the_file = 'edgelists/sociopatterns_hypertext.dat'
-At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
-#At.info_scipy_version()
+the_file = 'edgelists/Test.dat'
+At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 
 # compute accessibility
-#c = At.unfold_accessibility_memory_efficient()
-c = At.unfold_accessibility()
+c = At.unfold_accessibility(return_accessibility_matrix=False)
 
 # derivative of accessibility profile
 h = np.gradient(c)
-#print c
 
 # write the results to files
-Tools.dict2file(c, "Accessibility.txt")
-Tools.dict2file(h, "path_durations.txt")
+Tools.dict2file(c, "shortest_path_durations_cumiulative.txt")
+Tools.dict2file(h, "shortest_path_durations_histogram.txt")
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
 ### Details about randomization techniques are in Supplementary Material of
