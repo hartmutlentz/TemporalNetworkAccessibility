@@ -531,8 +531,10 @@ class AdjMatrixSequence(list):
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
 
         # first and last times
-        _, _, days = loadtxt(self.fname, dtype=int, usecols=self.cols,
-                             unpack=True)
+        #_, _, days = loadtxt(self.fname, dtype=int, usecols=self.cols,
+        #                     unpack=True)
+        _, _, days = np.array(zip(*edges))
+        
         if not self.first_day:
             self.first_day = min(days)
         if not self.last_day:
@@ -638,6 +640,33 @@ class AdjMatrixSequence(list):
             cumu.append(x.nnz)
 
         return np.array(cumu)
+
+    def trace_forward(self, start, stop=None):
+        """ same as unfold_accessibility_single_node, but returns all
+            nodes reached during traversal.
+        """
+        if not stop:
+            maxtime = len(self)
+        
+        # init
+        x = sp.coo_matrix(([1],([0],[start])),\
+            shape=(1, self.number_of_nodes), dtype=int)
+        x = x.tocsr()
+        
+        # these 2 lines are not in the for-loop to be
+        # optically consistent with the matrix version.
+        x = x + x * self[0]
+        cumu = {}
+        
+        x = x.tocoo()
+        cumu[0] = set(x.col)
+        
+        for t in range(1, maxtime):
+            x = x + x * self[t]
+            x = x.tocoo()
+            cumu[t] = set(x.col)
+
+        return cumu
 
 if __name__ == "__main__":
     from pprint import pprint

@@ -20,7 +20,7 @@ c = At.unfold_accessibility(return_accessibility_matrix=False)
 h = np.gradient(c)
 
 # write the results to files
-Tools.dict2file(c, "shortest_path_durations_cumiulative.txt")
+Tools.dict2file(c, "shortest_path_durations_cumulative.txt")
 Tools.dict2file(h, "shortest_path_durations_histogram.txt")
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
