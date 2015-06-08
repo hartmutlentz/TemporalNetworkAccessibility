@@ -2,7 +2,9 @@
 
 Provides classes used for computing the results of the Paper  
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
-Lentz et al., Phys. Rev. Lett., 2013.
+Lentz et al., Phys. Rev. Lett. 110, 118701 (2013).
+
+Please cite this reference, if you use the softare.
 
 ## Using the Software
 To compute the results of the paper, you only need the class *AdjMatrixSequence*.
