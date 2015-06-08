@@ -83,6 +83,25 @@ class TemporalEdgeList():
 
         for u, v, d in self.edges:
             et[(u, v)].append(d)
+        
+        # sort times
+        for times in et.values():
+            times.sort()
+        
+        return et
+        
+    def node_occurrence_times(self):
+        # dict {v:[t1, t2, ...]}
+        et = dict([(se, []) for se in self.nodes()])
+
+        for u, v, d in self.edges:
+            et[u].append(d)
+            et[v].append(d)
+
+        # sort times
+        for times in et.values():
+            times.sort()
+        
         return et
 
     def GST(self):
