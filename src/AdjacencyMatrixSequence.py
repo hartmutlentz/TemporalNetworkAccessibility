@@ -15,17 +15,18 @@ import copy
 
 class AdjMatrixSequence(list):
     """
-    list of sparse matrices
+    list of sparse matrices.
 
     class inherits from list.
-    the constructor expects filename of u,v,w,d-edgelist
+    The constructor expects filename of u,v,w,d-edgelist.
 
-    it constructs a list, where each entry is
-    a sparse matrix (default: csr)
-    the matrices in the list are ordered by time.
+    It constructs a list, where each entry is
+    a sparse matrix (default: csr).
+    Matrices in the list are ordered by time.
 
-    the indices of the matrix represent the nodes. Nodes are reindexed to
-    [0..number_of_nodes]
+    The indices of the matrix represent the nodes. Nodes are reindexed to
+    [0..number_of_nodes].
+    
     """
     def __init__(self, edgelist_fname, directed, write_label_file=True,
                  columns=(0, 1, 2), firsttime=None, lasttime=None):
@@ -68,7 +69,7 @@ class AdjMatrixSequence(list):
         else: return x[:len(y)] >= y
     
     def info_scipy_version(self):
-        """ Print information about scipy version and maximum Matrix size """
+        """ Print information about scipy version and maximum Matrix size. """
         if self.__scipy_version_for_large_matrices():
             print ("Scipy version can handle matrices with more than " +
                    "2^31 nonzero elements.")
@@ -76,7 +77,7 @@ class AdjMatrixSequence(list):
             print "Number of nonzero elements is restricted to 2^31."
 
     def groupByTime(self, edges):
-        """ returns list of tupels: [(d,[(u,v),...]),...] """
+        """ returns list of tupels: [(d,[(u,v),...]),...]. """
         dct = defaultdict(list)
         for u, v, d in edges:
             dct[d].append((u, v))
@@ -87,7 +88,7 @@ class AdjMatrixSequence(list):
 
     def reindex(self, edges):
         """ for any index in edges returns dict with new_indices
-            [0...number_of_unique_indices]
+            [0...number_of_unique_indices].
         """
         us, vs, ds = zip(*edges)
         nodes = set(us) | set(vs)
@@ -162,7 +163,7 @@ class AdjMatrixSequence(list):
 
     def average_path_length(self, M, diameter):
         """ returns average pathlength of a snapshot, where all path
-        lengths > 1 are considered.
+            lengths > 1 are considered.
         """
         x = [(M**i).nnz for i in range(2, diameter+1)]
         
@@ -290,7 +291,7 @@ class AdjMatrixSequence(list):
             Finite Size effects are ignored! Thus
             coarse_grain([1,2,3,4,5,6], 2) gives the same result as
             coarse_grain([1,2,3,4,5,6,7], 2), since the last element cannot
-            be aggregated in a 2-aggregate.
+            be aggregated into a 2-aggregate.
         """
         def main_loop(x):
             new_list = []
@@ -497,7 +498,6 @@ class AdjMatrixSequence(list):
 
     def write(self, fname):
         """ writes self to txtfile.
-            If network is undirected, edge-pairs appear twice.
         """
         # generate edge list
         t_edges = []
