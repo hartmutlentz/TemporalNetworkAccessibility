@@ -7,7 +7,6 @@ sys.path.append('./src')
 from AdjacencyMatrixSequence import AdjMatrixSequence
 from TemporalNetworkEdgeList import TemporalEdgeList
 import Tools
-import cPickle as pickle
 
 # import an edgelist as sequence of adjacency matrices
 the_file = 'edgelists/Test.dat'
