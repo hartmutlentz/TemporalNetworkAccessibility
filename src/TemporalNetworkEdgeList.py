@@ -103,27 +103,6 @@ class TemporalEdgeList():
             times.sort()
         
         return et
-    
-    def dilute(self, p=0.5):
-        """ Keep each edge in each snapshot with probability p,
-            i.e. remove each such edge with probability 1-p.
-        
-        """
-        assert p > 0.0, "Probability must be greater than zero."
-        if p >= 1.0:
-            return
-        
-        t = dict([(i, []) for i in self.possible_times])
-        
-        # get new edges
-        for d in self.snapshots:
-            for i, j in self.snapshots[d]:
-                if random.random() < p:
-                    t[d].append((i,j))
-                
-        self.snapshots = t
-        self.__update_edges
-        self.static_edges = self.__get_static_edges()
 
     def GST(self):
         # alias
