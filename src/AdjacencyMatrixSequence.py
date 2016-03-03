@@ -605,7 +605,28 @@ class AdjMatrixSequence(list):
             return cumu
 
     def unfold_accessibility_memory_efficient(self, return_ranges=False):
-        """ computes path density step by step for single nodes. """
+        """ Computes path density step by step for single nodes.
+        
+            Parameters
+            ----------
+            return ranges: boolean, optional (default=False)
+                If True, the method returns a tuple with path density over time
+                and the range for every node.
+                
+            Returns
+            -------
+            Returns a numpy vector, where indices are the time steps and values
+            are path densities (not normalized).
+            
+            If '''return ranges''', returns a tuple with the above path
+            denisities and the range of the nodes as a dictionary.
+            
+            Usage
+            -----
+            >>> c = At.unfold_accessibility_memory_efficient()
+            >>> c, r = At.unfold_accessibility_memory_efficient(True)
+        
+        """
         all_paths = zeros(len(self), dtype=int)
         ranges = {}
         
