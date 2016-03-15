@@ -28,7 +28,7 @@ class AdjMatrixSequence(list):
     [0..number_of_nodes].
     
     """
-    def __init__(self, edgelist_fname, directed, write_label_file=True,
+    def __init__(self, edgelist_fname, directed, write_label_file=False,
                  columns=(0, 1, 2), firsttime=None, lasttime=None):
         list.__init__(self)
         self.first_day = firsttime
@@ -52,12 +52,14 @@ class AdjMatrixSequence(list):
         return copy.deepcopy(self)
 
     def __scipy_version_for_large_matrices(self, ref="0.14.0"):
-        """ Checks if the installed version of Scipy is at least ref.
-            This is necessary for handling very large sparse matrices.
-            For scipy versions < 0.14.0. the variables indptr and indices are
-            stored as int32. Thus te number of non-zero entries is restricted to
-            2^31 \sim 10^9 elements.
-            Returns True, if installed Version > ref. False otherwise.
+        """
+        Checks if the installed version of Scipy is at least ref.
+        This is necessary for handling very large sparse matrices.
+        For scipy versions < 0.14.0. the variables indptr and indices are
+        stored as int32. Thus, the number of non-zero entries is restricted to
+        2^31 \sim 10^9 elements.
+        Returns True, if installed Version > ref. False otherwise.
+        
         """
         # split versions into numbers
         x = scipy.__version__.split(".")
@@ -529,10 +531,6 @@ class AdjMatrixSequence(list):
     def matricesCreation(self):
         """ creates list of sparse matrices from input file """
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
-
-        # first and last times
-        #_, _, days = loadtxt(self.fname, dtype=int, usecols=self.cols,
-        #                     unpack=True)
         _, _, days = np.array(zip(*edges))
         
         if not self.first_day:
