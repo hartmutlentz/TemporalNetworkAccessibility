@@ -2,7 +2,6 @@
 #
 
 import random
-import scipy as sc
 import numpy as np
 try:
     import networkx as nx  # Optional, for CM model
@@ -76,24 +75,24 @@ class TemporalEdgeList():
         if len(cut) != len(the_edges):
             print 'Removed multiple edges in dataset.'
         self.edges = list(cut)
-        
+
     def dilute(self, p=0.5):
         """ Keep each edge in each snapshot with probability p,
             i.e. remove each such edge with probability 1-p.
-        
+
         """
         assert p > 0.0, "Probability must be greater than zero."
         if p >= 1.0:
             return
-        
+
         t = dict([(i, []) for i in self.possible_times])
-        
+
         # get new edges
         for d in self.snapshots:
             for i, j in self.snapshots[d]:
                 if random.random() < p:
-                    t[d].append((i,j))
-                
+                    t[d].append((i, j))
+
         self.snapshots = t
         self.__update_edges
         self.static_edges = self.__get_static_edges()
@@ -104,13 +103,13 @@ class TemporalEdgeList():
 
         for u, v, d in self.edges:
             et[(u, v)].append(d)
-        
+
         # sort times
         for times in et.values():
             times.sort()
-        
+
         return et
-        
+
     def node_occurrence_times(self):
         # dict {v:[t1, t2, ...]}
         et = dict([(se, []) for se in self.nodes()])
@@ -122,7 +121,7 @@ class TemporalEdgeList():
         # sort times
         for times in et.values():
             times.sort()
-        
+
         return et
 
     def GST(self):
@@ -296,7 +295,7 @@ class TemporalEdgeList():
 
                     edges.add((x[0], y[1]))
                     edges.add((y[0], x[1]))
-                #print 'remaining: ', iterations-i
+                # print 'remaining: ', iterations-i
 
         self.snapshots[time] = list(edges)
 
@@ -370,7 +369,7 @@ class TemporalEdgeList():
             SLOW!
         """
         prob = self.average_size() / len(self.static_edges)
-        #print prob
+        # print prob
         for i in range(self.mintime, self.maxtime):
             print "Random times uniform. Step ", i, " of ", self.maxtime
             edges = []
@@ -405,7 +404,7 @@ class TemporalEdgeList():
         for i, j in enumerate(sizes):
             print "Random times. Step ", i, " of ", timespan
             edges = set()
-            #while len(edges)<new_sizes[j]:
+            # while len(edges)<new_sizes[j]:
             for _ in range(len(self.static_edges)):
                 if len(edges) >= new_sizes[j]:
                     break
@@ -419,7 +418,7 @@ if __name__ == "__main__":
     from pprint import pprint
     the_file = '../edgelists/Test.dat'
     E = TemporalEdgeList(the_file, True, timecolumn=2)
-    
+
     print E.snapshots[0]
     E.dilute(0.09)
     print E.snapshots[0]
