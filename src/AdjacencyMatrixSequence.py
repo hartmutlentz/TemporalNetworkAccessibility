@@ -1,16 +1,16 @@
 #! /usr/bin/python
 
-from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, dok_matrix
+from scipy.sparse import csr_matrix, lil_matrix
 import scipy.sparse as sp
 import scipy.stats
 import numpy as np
-from numpy import loadtxt, zeros, savetxt
+from numpy import loadtxt, zeros
 import scipy
-from random import sample
 from collections import defaultdict
-from scipy.io import mmread, mmwrite, loadmat, savemat
+from scipy.io import mmread
 import random
 import copy
+import itertools
 
 
 class AdjMatrixSequence(list):
@@ -26,7 +26,7 @@ class AdjMatrixSequence(list):
 
     The indices of the matrix represent the nodes. Nodes are reindexed to
     [0..number_of_nodes].
-    
+
     """
     def __init__(self, edgelist_fname, directed, write_label_file=False,
                  columns=(0, 1, 2), firsttime=None, lasttime=None):
@@ -42,11 +42,11 @@ class AdjMatrixSequence(list):
         if not self.is_directed:
             self.as_undirected()
         self.number_of_nodes = scipy.shape(self[0])[0]
-        
+
     def copy(self):
         """ alias """
         return copy.copy(self)
-    
+
     def deepcopy(self):
         """ alias """
         return copy.deepcopy(self)
@@ -59,17 +59,20 @@ class AdjMatrixSequence(list):
         stored as int32. Thus, the number of non-zero entries is restricted to
         2^31 \sim 10^9 elements.
         Returns True, if installed Version > ref. False otherwise.
-        
+
         """
         # split versions into numbers
         x = scipy.__version__.split(".")
         y = ref.split(".")
-        
+
         # compare adjusted lengths
-        if len(x)==len(y): return x >= y
-        elif len(x) < len(y): return x >= y[:len(x)]
-        else: return x[:len(y)] >= y
-    
+        if len(x) == len(y):
+            return x >= y
+        elif len(x) < len(y):
+            return x >= y[:len(x)]
+        else:
+            return x[:len(y)] >= y
+
     def info_scipy_version(self):
         """ Print information about scipy version and maximum Matrix size. """
         if self.__scipy_version_for_large_matrices():
@@ -129,8 +132,8 @@ class AdjMatrixSequence(list):
         n = self.number_of_nodes
 
         if norm:
-            return float(nlinks) / (float((n - 2) * (n**2 - n))
-                                    + float(n**2 - n))
+            return float(nlinks) / (float((n - 2) * (n**2 - n)) +
+                                    float(n**2 - n))
         else:
             return float(nlinks) / float((n**2 - n))
 
@@ -168,7 +171,7 @@ class AdjMatrixSequence(list):
             lengths > 1 are considered.
         """
         x = [(M**i).nnz for i in range(2, diameter+1)]
-        
+
         return np.mean(x)
 
     def long_paths_per_snapshot(self, max_path_length):
@@ -177,7 +180,7 @@ class AdjMatrixSequence(list):
                 Grindrod et al.
                 *Communicability across evolving networks*
                 Phys. Rev. E, 2011.
-        
+
             Matrices in At should be corrected, if many entries are > 1.
             max_path_length should be the diameter of the aggregated network.
         """
@@ -185,7 +188,7 @@ class AdjMatrixSequence(list):
         for i in range(len(self)):
             print i
             p = self.average_path_length(self[i], max_path_length)
-            #if p > 1:
+            # if p > 1:
             d[i] = p
 
         return d
@@ -201,15 +204,15 @@ class AdjMatrixSequence(list):
         for i in range(len(self)):
             print "Correcting snapshots for long paths. Step ", i
             M = self[i].copy()
-            
+
             for j in range(2, diameter):
                 M = M + self[i]**j
-            
+
             self[i] = M
-    
+
         print "---> paths up to length ", diameter, \
             " are now considered in snapshots."
-    
+
         return
 
     def LCCs(self):
@@ -286,10 +289,10 @@ class AdjMatrixSequence(list):
         """ coarse grain the list, i.e. partial aggregation of the network.
             aggregate - gives the number of matrices to be summed up.
             In numbers to get the idea:
-            
+
                 coarse_grain([1,2,3,4,5,6], 2) = [1+2, 3+4, 5+6].
              or coarse_grain([1,2,3,4,5,6], 3) = [1+2+3, 4+5+6].
-                
+
             Finite Size effects are ignored! Thus
             coarse_grain([1,2,3,4,5,6], 2) gives the same result as
             coarse_grain([1,2,3,4,5,6,7], 2), since the last element cannot
@@ -306,23 +309,23 @@ class AdjMatrixSequence(list):
                         return new_list
                 new_list.append(sum(partial))
             return new_list
-    
+
         assert aggregate <= len(self),\
             'Aggregate must contain less snapshots then observation time steps'
-        
+
         if return_copy:
             x = self.copy()
         else:
             x = self
 
         new_list = main_loop(x)
-        
+
         del x[:]
         x.extend(new_list)
-        
+
         for A in x:
             self.bool_int_matrix(A)
-        
+
         if return_copy:
             return x
         else:
@@ -345,9 +348,9 @@ class AdjMatrixSequence(list):
 
             nodes = nodes1.union(nodes2)
             active[i] = len(nodes) / norma
-            
+
         return active
-    
+
     def edge_activity_series(self, norm=True):
         """ Dict {time:matrix_density} """
         da = {}
@@ -361,7 +364,7 @@ class AdjMatrixSequence(list):
             da[i] = float(self[i].nnz) / norma
 
         return da
-    
+
     def shift_start_time(self, new_start_time, return_copy=False):
         """ Returns list of adjacency matrices with new ordering, beginning with
             Index new_start_time using periodic boundary conditions.
@@ -429,11 +432,11 @@ class AdjMatrixSequence(list):
 
     def as_undirected(self):
         """ makes every matrix in self symmetric. """
-        #if self.is_directed:
+        # if self.is_directed:
         for i in range(len(self)):
             self[i] = self.symmetrize_matrix(self[i])
         self.is_directed = False
-        #else:
+        # else:
         #    raise NotImplementedError, "Network is already undirected."
 
     def clustering_matrix2vector(self, in_file):
@@ -478,7 +481,7 @@ class AdjMatrixSequence(list):
 
         domain = range(n)
         C = lil_matrix((n, n), dtype='float')
-        #c=[]
+        # c=[]
 
         if random_iterations:
             for l in range(random_iterations):
@@ -487,16 +490,15 @@ class AdjMatrixSequence(list):
                 trace, c_norm = triple_product(self[i], self[j], self[k])
                 if c_norm > 0.0:
                     C[j-i, k-j] += float(trace) / c_norm
-                    #c.append((i,j,k,float(trace)/c_norm))
+                    # c.append((i,j,k,float(trace)/c_norm))
         else:
             for (i, j, k) in itertools.combinations(domain, 3):
                 trace, c_norm = triple_product(self[i], self[j], self[k])
                 if c_norm > 0.0:
                     C[j-i, k-j] += float(trace) / c_norm
-                    #c.append((i,j,k,float(trace)/c_norm))
+                    # c.append((i,j,k,float(trace)/c_norm))
 
         return C
-        #return c
 
     def write(self, fname):
         """ writes self to txtfile.
@@ -504,7 +506,7 @@ class AdjMatrixSequence(list):
         # generate edge list
         t_edges = []
         for i in range(len(self)):
-            #print "extracting edges ",i
+            # print "extracting edges ",i
             indices = zip(self[i].nonzero()[0], self[i].nonzero()[1])
             to_add = [(u, v, i) for u, v in indices]
             t_edges.extend(to_add)
@@ -532,7 +534,7 @@ class AdjMatrixSequence(list):
         """ creates list of sparse matrices from input file """
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
         _, _, days = np.array(zip(*edges))
-        
+
         if not self.first_day:
             self.first_day = min(days)
         if not self.last_day:
@@ -568,12 +570,12 @@ class AdjMatrixSequence(list):
 
     def bool_int_matrix(self, M):
         """ Returns matrix with only np.int64: ones. """
-        #M = M.astype('bool')
-        #M = M.astype('i')
+        # M = M.astype('bool')
+        # M = M.astype('i')
         M.data = np.ones_like(M.data)
 
-    def unfold_accessibility(self, verbose=True,\
-            return_accessibility_matrix=False):
+    def unfold_accessibility(self, verbose=True,
+                             return_accessibility_matrix=False):
         """ Unfold accessibility storing path density.
 
         """
@@ -604,30 +606,30 @@ class AdjMatrixSequence(list):
 
     def unfold_accessibility_memory_efficient(self, return_ranges=False):
         """ Computes path density step by step for single nodes.
-        
+
             Parameters
             ----------
             return ranges: boolean, optional (default=False)
                 If True, the method returns a tuple with path density over time
                 and the range for every node.
-                
+
             Returns
             -------
             Returns a numpy vector, where indices are the time steps and values
             are path densities (not normalized).
-            
+
             If '''return ranges''', returns a tuple with the above path
             denisities and the range of the nodes as a dictionary.
-            
+
             Usage
             -----
             >>> c = At.unfold_accessibility_memory_efficient()
             >>> c, r = At.unfold_accessibility_memory_efficient(True)
-        
+
         """
         all_paths = zeros(len(self), dtype=int)
         ranges = {}
-        
+
         for node in range(self.number_of_nodes):
             print 'Computing accessibility for node ', node+1,\
                     ' of ', self.number_of_nodes
@@ -645,15 +647,15 @@ class AdjMatrixSequence(list):
             the number of nonzeros for every timestep.
         """
         # init
-        x = sp.coo_matrix(([1],([0],[start])),\
-            shape=(1, self.number_of_nodes), dtype=int)
+        x = sp.coo_matrix(([1], ([0], [start])),
+                          shape=(1, self.number_of_nodes), dtype=int)
         x = x.tocsr()
-        
+
         # these 2 lines are not in the for-loop to be
         # optically consistent with the matrix version.
         x = x + x * self[0]
         cumu = [x.nnz]
-        
+
         for t in range(1, len(self)):
             x = x + x * self[t]
             cumu.append(x.nnz)
@@ -666,20 +668,20 @@ class AdjMatrixSequence(list):
         """
         if not stop:
             maxtime = len(self)
-        
+
         # init
-        x = sp.coo_matrix(([1],([0],[start])),\
-            shape=(1, self.number_of_nodes), dtype=int)
+        x = sp.coo_matrix(([1], ([0], [start])),
+                          shape=(1, self.number_of_nodes), dtype=int)
         x = x.tocsr()
-        
+
         # these 2 lines are not in the for-loop to be
         # optically consistent with the matrix version.
         x = x + x * self[0]
         cumu = {}
-        
+
         x = x.tocoo()
         cumu[0] = set(x.col)
-        
+
         for t in range(1, maxtime):
             x = x + x * self[t]
             x = x.tocoo()
@@ -688,12 +690,10 @@ class AdjMatrixSequence(list):
         return cumu
 
 if __name__ == "__main__":
-    from pprint import pprint
-
     At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
                            directed=False)
 
     print len(At), At[0]
     At.coarse_grain(184)
     print len(At), At[0]
-    #c = At.unfold_accessibility()
+    # c = At.unfold_accessibility()
