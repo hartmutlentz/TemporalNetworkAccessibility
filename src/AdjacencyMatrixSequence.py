@@ -238,8 +238,15 @@ class AdjMatrixSequence(list):
             paths += out_size
 
         return float(paths) / n**2
+        
+    def static_path_density(self):
+    	"""	Path density of the aggregated network.
+    	
+    	"""
+	return self.path_density_of_A(self.cumulated())
 
-    def static_path_density(self, ende=None):
+
+    def step_by_step_static_path_density(self, ende=None):
         """ Returns list. [index=Aggregation depth: static path density]
 
         """
