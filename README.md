@@ -53,6 +53,17 @@ A working example with steps 1—4 is shown in the file 'Unfold_Accessibility.py
 
 **A note on normalization.** Path-density (```c```) and the distribution of shortest path durations (```h```) are not normalized at this point. Consequently, you should normalize ```c``` by the number of nodes squared and ```h``` to unity. As noted in the paper, ```c``` is not necessarily normalized to unity.
 
+### Causal fidelity
+Causal fidelity is given by the causal path density normalized by the static path density. The causal path density is simply given by the last computed value ```c[-1]```. The static path density can be computed using method ```At.static_path_density()```.
+
+After ```c``` has been computed, the code would look like this:
+
+```python
+causal_paths = c[-1]
+static_paths = At.static_path_density()
+print "---> Causal fidelity is ", float(causal_paths)/float(static_paths)
+```
+
 ### Additional functionality
 The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail described in my PhD thesis [4].
 
@@ -71,7 +82,7 @@ E.write("Randomized_edges_RE.txt")
 ```
 
 ## Required Software/packages:
-- Python 2.7 (should run on 2.6, too)
+- Python 2.7 (should run on 2.6 as well)
 - scipy
 - numpy
 - Networkx package (optional, required for the configuration model).
@@ -89,3 +100,4 @@ Both files were also used in [3].
 [2]	L. Isella, J. Stehle, A. Barrat, C. Cattuto, J.-F. Pinton, and W. Van den Broeck, J. Theor. Biol. 271, 166 (2011).  
 [3]	H. H. K. Lentz, T. Selhorst, and I. M. Sokolov, Phys. Rev. Lett. 110, 118701 (2013).  
 [4] H. H. K. Lentz, PhD Thesis, [Humboldt-University of Berlin](http://edoc.hu-berlin.de/dissertationen/lentz-hartmut-2013-11-06/METADATA/abstract.php?id=40377) or [GitHub](https://github.com/hartmutlentz/Thesis)
+[5]	Lentz, H. H. K. et al., PLOS ONE 11, e0155196–32 (2016).
