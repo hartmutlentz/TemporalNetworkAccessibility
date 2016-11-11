@@ -226,25 +226,117 @@ class AdjMatrixSequence(list):
 
         return crit
 
-    def path_density_of_A(self, A):
-        """ The path density of an Adjacency Matrix A """
-        paths = 0
+#    def path_density_of_A(self, A):
+#        """ The path density of an Adjacency Matrix A """
+#        paths = 0
+#        n = scipy.shape(A)[0]
+#
+#        for i in range(n):
+#            out_size =\
+#                len(sp.csgraph.depth_first_order(A,
+#                    i, return_predecessors=False))-1
+#            paths += out_size
+#
+#        return float(paths) / n**2
+    def LSCC_nodes(self, A):
+        """ Return nodes of the largest stringly connected component of a
+            network given by a sparse matrix A.
+
+            Parameters
+            ----------
+            A - scipy.sparse matrix
+                Adjacency matrix of the network. Assumed to be directed.
+
+            Returns
+            -------
+            list
+                Node labels of the nodes in the LSCC.
+        """
+        n, labs = sp.csgraph.connected_components(A, connection="strong")
+
+        nodes = set()
+        for i in range(len(labs)):
+            if labs[i] == 0:
+                nodes.add(i)
+
+        return nodes
+
+    def path_density_of_A(self, A, normalize=False):
+        """ Return the path density of a network given by adjacency matrix A.
+            Selfloops are explicitely included.
+        """
         n = scipy.shape(A)[0]
+        all_nodes = set(range(n))
 
-        for i in range(n):
-            out_size =\
-                len(sp.csgraph.depth_first_order(A,
-                    i, return_predecessors=False))-1
-            paths += out_size
+        lscc_nodes = self.LSCC_nodes(A)
+        rest_nodes = all_nodes - lscc_nodes
 
-        return float(paths) / n**2
-        
-    def static_path_density(self):
-    	"""	Path density of the aggregated network.
-    	
-    	"""
-	return self.path_density_of_A(self.cumulated())
+        paths = 0
 
+        # LSCC nodes
+        lscc_sample_node = next(iter(lscc_nodes))
+        lscc_range = len(sp.csgraph.depth_first_order(A,
+                         lscc_sample_node, return_predecessors=False))
+        for i in lscc_nodes:
+            paths += lscc_range
+
+        # Remaining nodes
+        for i in rest_nodes:
+            rng = len(sp.csgraph.depth_first_order(A,
+                      i, return_predecessors=False))
+            paths += rng
+
+        if normalize:
+            return float(paths) / float(n**2)
+        else:
+            return paths
+
+    def static_path_density(self, normalize=False):
+        """
+        Path density of the aggregated network. This algorithm first
+        computes the range of every node, i.e. the size of its
+        out-component. The path density is then given by the sum over all
+        node ranges.
+
+        The method makes use of the giant component structure of the
+        network to save cpomutation time.
+
+        An explanation is given in:
+        Lentz, H. H. K. et al.
+        *Disease Spread through Animal Movements: A Static and Temporal
+        Network Analysis of Pig Trade in Germany.*
+        PLOS ONE 11, e0155196-32 (2016).
+
+        Parameters
+        ----------
+        normalize - Boolean
+            If True, the path density is given by the number of all paths
+            normalized by N**2, where N is the number of nodes.
+
+        Returns
+        -------
+        int or float.
+            The number of paths in the static network. If normalized, the
+            path density.
+
+        Example
+        -------
+        >>> # At = AdjMatrixSequence(<...>)
+        >>> # This method actually works in an At-Object only.
+        >>> A = sp.lil_matrix((5,5))
+        >>> A[0,1] = 1
+        >>> A[4,0] = 1
+        >>> A[1,2] = 1
+        >>> A[2,3] = 1
+        >>> A[3,1] = 1
+        >>> print static_path_density(A, normalized=False)
+            18
+
+        Note that the network is considered directed. There are 18 paths,
+        i.e. 13 paths between nodes and 5 paths (selfloops) are given by
+        definition.
+        """
+        return self.path_density_of_A(self.cumulated(), normalize)
 
     def step_by_step_static_path_density(self, ende=None):
         """ Returns list. [index=Aggregation depth: static path density]
@@ -698,9 +790,10 @@ class AdjMatrixSequence(list):
 
 if __name__ == "__main__":
     At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
-                           directed=False)
+                           directed=True)
 
-    print len(At), At[0]
-    At.coarse_grain(184)
-    print len(At), At[0]
+    #print len(At), At[0]
+    #At.coarse_grain(184)
+    #print len(At), At[0]
+    print At.static_path_density(normalize=True)
     # c = At.unfold_accessibility()
