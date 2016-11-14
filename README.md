@@ -4,11 +4,11 @@ Provides classes used for computing the results of the Paper
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
 Lentz et al., Phys. Rev. Lett. 110, 118701 (2013).
 
-Please cite this reference, if you use the softare.
+Please cite this reference, if you use the software.
 
 ## Using the Software
 To compute the results of the paper, you only need the class *AdjMatrixSequence*.
-You can compute the Accessibility Matrix of a temporal netwotk following these steps:
+You can compute the Accessibility Matrix of a temporal network following these steps:
 
 ### Step 1
 ```python
@@ -20,7 +20,7 @@ source_node	target_node	time
 ```
 where the columns are separated by tabs. Thus, the file is a standard edge list with an additional time column. Examples are in the *edgelists* folder.
 
-Additionally, more options could be used in this step. You can use option *directed=True*, if your network is directed (default is undirected). The option *write_label_file=True* (default is *False*) can be used, if you have nodes names that are not "matrix label friendly", as names for example. If *write_label_file=True*, an additional file is written into the woring directory, which contains the old and new node labels.
+Additionally, more options could be used in this step. You can use option *directed=True*, if your network is directed (default is undirected). The option *write_label_file=True* (default is *False*) can be used, if you have nodes names that are not "matrix label friendly", as names for example. If *write_label_file=True*, an additional file is written into the working directory, which contains the old and new node labels.
 
 ### Step 2
 ```python
@@ -47,7 +47,7 @@ This returns the numerical derivative of the path-density, which is the shortest
 Tools.dict2file(c, "path_density.txt")
 Tools.dict2file(h, "path_durations.txt")
 ```
-This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotzing software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
+This writes the generated data to txt-files, so you can plot it using gnuplot, Excel or you favorite plotting software. The files have 2 columns: *time and path density* or *time and path duration*, respectively.
 
 A working example with steps 1—4 is shown in the file 'Unfold_Accessibility.py'.
 
@@ -65,7 +65,7 @@ print "---> Causal fidelity is ", float(causal_paths)/float(static_paths)
 ```
 
 ### Additional functionality
-The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therin). The methods described in more detail described in my PhD thesis [4].
+The Class *TemporalEdgeList* provides methods to load a temporal network as a temporal edgelist. It can be used for randomization of temporal networks. There is a number of methods to randomize temporal networks. The methods implemented here have also been used in the supplementary material of [3] (also see references therein). The methods described in more detail described in my PhD thesis [4].
 
 You can create a temporal edgelist like this:
 ```python
