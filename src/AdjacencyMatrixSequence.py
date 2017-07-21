@@ -522,6 +522,24 @@ class AdjMatrixSequence(list):
         else:
             return
 
+    def transpose(self, inplace=True):
+        """ Transpose all matrices in self.
+            If inplace, the object in transposed in place, otherwise a new
+            sequence is returned.
+        """
+        if inplace:
+            x = self
+        else:
+            x = self[:]
+
+        for i in range(len(self)):
+            x[i] = x[i].transpose()
+
+        if inplace:
+            return
+        else:
+            return x
+
     def symmetrize_matrix(self, A):
         """ Returns symmetric version of a non-symm Matrix A as bool-int. """
         M = A + A.transpose()
@@ -791,9 +809,8 @@ class AdjMatrixSequence(list):
 if __name__ == "__main__":
     At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
                            directed=True)
-
-    #print len(At), At[0]
-    #At.coarse_grain(184)
-    #print len(At), At[0]
-    print At.static_path_density(normalize=True)
+    # print len(At), At[0]
+    # At.coarse_grain(184)
+    # print len(At), At[0]
+    # print At.static_path_density(normalize=True)
     # c = At.unfold_accessibility()
