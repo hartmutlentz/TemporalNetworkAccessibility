@@ -369,7 +369,7 @@ class AdjMatrixSequence(list):
 
         return li
 
-    def cumulated(self, start=0, ende=None):
+    def cumulated(self, weighted=False, start=0, ende=None):
         """ Returns Cumulated Graph as Matrix """
         C = csr_matrix((self.number_of_nodes, self.number_of_nodes),
                        dtype=np.int32)
@@ -382,7 +382,10 @@ class AdjMatrixSequence(list):
         for i in range(start, e):
             C = C + self[i]
 
-        return C
+        if weighted:
+            return C
+        else:
+            return self.bool_int_matrix(C)
 
     def coarse_grain(self, aggregate, return_copy=False):
         """ coarse grain the list, i.e. partial aggregation of the network.
@@ -567,18 +570,44 @@ class AdjMatrixSequence(list):
             x[i + j] += C[i, j]
         return x
 
-    def __random_combination_with_replacement(self, iterable, r):
+    def __random_combination(self, iterable, r, with_replacement=False):
         """ Random selection from
-            itertools.combinations_with_replacement(iterable, r)
+            itertools.combinations_with_replacement(iterable, r).
+            
+            Parameters
+            ----------
+            iterable: iterable
+                list where samples are drawn from.
+            
+            r: int
+                number of elements to be sampled
+            
+            with_replacement: boolean (optional, default=False)
+                if True, combinations with i<=j<=k are returned, if False i<j<k.
         """
         pool = tuple(iterable)
         n = len(pool)
-        indices = sorted(random.randrange(n) for i in xrange(r))
+        if with_replacement:
+            indices = sorted(random.randrange(n) for i in xrange(r))
+        else:
+            indices = sorted(random.sample(xrange(n), r))
         return tuple(pool[i] for i in indices)
 
-    def clustering_matrix(self, limit=None, random_iterations=False):
+    def clustering_matrix(self, limit=None, random_iterations=True, replacement=False):
         """ Computes the matrix of clustering coefficients of
             a matrix sequence.
+            
+            Parameters
+            ----------
+            limit: int, optional (default=None)
+                Number of time steps to be considered.
+                
+            random_iterations: Boolean, optional (default=True)
+                If True, sample time triples are considered
+                
+            replacement: Boolean, optional (default=False)
+                If True, time indices follow the condition i=<j<=k, and i<j<k, if False.
+                
         """
         def triple_product(M1, M2, M3):
             # Product of three matrices
@@ -603,7 +632,7 @@ class AdjMatrixSequence(list):
         if random_iterations:
             for l in range(random_iterations):
                 (i, j, k) = \
-                    self.__random_combination_with_replacement(domain, 3)
+                    self.__random_combination(domain, 3, replacement)
                 trace, c_norm = triple_product(self[i], self[j], self[k])
                 if c_norm > 0.0:
                     C[j-i, k-j] += float(trace) / c_norm
@@ -687,8 +716,6 @@ class AdjMatrixSequence(list):
 
     def bool_int_matrix(self, M):
         """ Returns matrix with only np.int64: ones. """
-        # M = M.astype('bool')
-        # M = M.astype('i')
         M.data = np.ones_like(M.data)
 
     def unfold_accessibility(self, verbose=True,
