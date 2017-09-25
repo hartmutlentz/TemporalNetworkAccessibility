@@ -385,7 +385,8 @@ class AdjMatrixSequence(list):
         if weighted:
             return C
         else:
-            return self.bool_int_matrix(C)
+            self.bool_int_matrix(C)
+            return C
 
     def coarse_grain(self, aggregate, return_copy=False):
         """ coarse grain the list, i.e. partial aggregation of the network.
