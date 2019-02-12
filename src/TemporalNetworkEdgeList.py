@@ -6,8 +6,8 @@ import numpy as np
 try:
     import networkx as nx  # Optional, for CM model
 except ImportError:
-    print "Networkx-Package is not installed.\
-        Configuration-Model (CM) not available."
+    print("Networkx-Package is not installed.\
+        Configuration-Model (CM) not available.")
 
 
 class TemporalEdgeList():
@@ -73,7 +73,7 @@ class TemporalEdgeList():
         the_edges = [(u, v, t) for (u, v, t) in self.edges]
         cut = set(the_edges)
         if len(cut) != len(the_edges):
-            print 'Removed multiple edges in dataset.'
+            print('Removed multiple edges in dataset.')
         self.edges = list(cut)
 
     def dilute(self, p=0.5):
@@ -295,7 +295,7 @@ class TemporalEdgeList():
 
                     edges.add((x[0], y[1]))
                     edges.add((y[0], x[1]))
-                # print 'remaining: ', iterations-i
+                # print('remaining: ', iterations-i)
 
         self.snapshots[time] = list(edges)
 
@@ -309,7 +309,7 @@ class TemporalEdgeList():
             Use RE for smaller networks only.
         """
         for i, t in enumerate(self.snapshots):
-            print "Configuration model for t= ", i, " of ", self.timespan
+            print("Configuration model for t= ", i, " of ", self.timespan)
             new_edges = self.\
                 __graphlet_configuration_model(self.__graphlet_to_nx_graph(t))
             self.snapshots[t] = new_edges
@@ -325,7 +325,7 @@ class TemporalEdgeList():
         """ Edge randomization for each graphlet
         """
         for i, j in enumerate(self.snapshots):  # range(self.maxtime):
-            print "Randomizing ", i, " of ", self.timespan
+            print("Randomizing ", i, " of ", self.timespan)
             self.__randomize_graphlet(j, maxiterations)
         self.__update_edges()
         self.static_edges = self.__get_static_edges()
@@ -369,9 +369,9 @@ class TemporalEdgeList():
             SLOW!
         """
         prob = self.average_size() / len(self.static_edges)
-        # print prob
+        # print(prob)
         for i in range(self.mintime, self.maxtime):
-            print "Random times uniform. Step ", i, " of ", self.maxtime
+            print("Random times uniform. Step ", i, " of ", self.maxtime)
             edges = []
             for e in self.static_edges:
                 if random.random() < prob:
@@ -402,7 +402,7 @@ class TemporalEdgeList():
 
         timespan = self.maxtime - self.mintime
         for i, j in enumerate(sizes):
-            print "Random times. Step ", i, " of ", timespan
+            print("Random times. Step ", i, " of ", timespan)
             edges = set()
             # while len(edges)<new_sizes[j]:
             for _ in range(len(self.static_edges)):
@@ -419,18 +419,18 @@ if __name__ == "__main__":
     the_file = '../edgelists/Test.dat'
     E = TemporalEdgeList(the_file, True, timecolumn=2)
 
-    print E.snapshots[0]
+    print(E.snapshots[0])
     E.dilute(0.09)
-    print E.snapshots[0]
-    #print len(E.edges)
+    print(E.snapshots[0])
+    #print(len(E.edges))
     #E=TemporalEdgeList("sociopatterns_113.dat",False)
     #pprint(E.edges)
     #E.randomize_edges()
     #E.random_times()
-    #print E.average_size(),len(E.snapshots)
-    #print len(E.edges)
+    #print(E.average_size(),len(E.snapshots))
+    #print(len(E.edges))
 
     #E.write("out1_RE.txt")
 
-    #print E.edge_occurrence_times()
-    #print E.shuffle_edge_times(E.edge_occurrence_times())
+    #print(E.edge_occurrence_times())
+    #print(E.shuffle_edge_times(E.edge_occurrence_times()))

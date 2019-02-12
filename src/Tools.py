@@ -28,12 +28,12 @@ def dict2file(d, nameoffile='dict.txt', sorted=True):
     if not isinstance(d, dict):
         d = list2dict(d)
 
-    dk = d.keys()
+    dk = list(d.keys())
     if sorted:
         dk.sort()
 
     # if d={ 1: [a,b,c,...], 2:[d,e,f,...],... }
-    s = d.values()[0]
+    s = list(d.values())[0]
     if isinstance(s, dict) or isinstance(s, list) or isinstance(s, tuple):
         laenge = len(d.values()[0])
         g = file(nameoffile, 'w+')
@@ -45,7 +45,7 @@ def dict2file(d, nameoffile='dict.txt', sorted=True):
         g.close
         return
 
-    g = file(nameoffile, 'w+')
+    g = open(nameoffile, 'w+')
     for k in dk:
         g.writelines((str(k), '\t', str(d[k]), '\n'))
     g.close

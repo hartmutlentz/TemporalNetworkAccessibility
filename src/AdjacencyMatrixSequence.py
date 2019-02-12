@@ -76,10 +76,10 @@ class AdjMatrixSequence(list):
     def info_scipy_version(self):
         """ Print information about scipy version and maximum Matrix size. """
         if self.__scipy_version_for_large_matrices():
-            print ("Scipy version can handle matrices with more than " +
+            print("Scipy version can handle matrices with more than " +
                    "2^31 nonzero elements.")
         else:
-            print "Number of nonzero elements is restricted to 2^31."
+            print("Number of nonzero elements is restricted to 2^31.")
 
     def groupByTime(self, edges):
         """ returns list of tupels: [(d,[(u,v),...]),...]. """
@@ -109,7 +109,7 @@ class AdjMatrixSequence(list):
             mw = len(self)
 
         for twindow in range(mw):
-            print twindow
+            print(twindow)
             p_corr[twindow] = self.single_time_window(twindow)
         return p_corr
 
@@ -186,7 +186,7 @@ class AdjMatrixSequence(list):
         """
         d = {}
         for i in range(len(self)):
-            print i
+            print(i)
             p = self.average_path_length(self[i], max_path_length)
             # if p > 1:
             d[i] = p
@@ -202,7 +202,7 @@ class AdjMatrixSequence(list):
                 Phys. Rev. E, 2011.
         """
         for i in range(len(self)):
-            print "Correcting snapshots for long paths. Step ", i
+            print("Correcting snapshots for long paths. Step ", i)
             M = self[i].copy()
 
             for j in range(2, diameter):
@@ -210,8 +210,8 @@ class AdjMatrixSequence(list):
 
             self[i] = M
 
-        print "---> paths up to length ", diameter, \
-            " are now considered in snapshots."
+        print("---> paths up to length ", diameter, \
+            " are now considered in snapshots.")
 
         return
 
@@ -221,7 +221,7 @@ class AdjMatrixSequence(list):
         """
         crit = {}
         for i, M in enumerate(self):
-            print "LCC ", i
+            print("LCC ", i)
             crit[i] = (self.__matrix_mean_degree(M), self.__matrix_LCC_size(M))
 
         return crit
@@ -344,7 +344,7 @@ class AdjMatrixSequence(list):
         """
         pd = []
         for i, Cn in enumerate(self.step_by_step_aggregation(ende)):
-            print 'Static path density. Step ', i
+            print('Static path density. Step ', i)
             pd.append(self.path_density_of_A(Cn))
 
         return pd
@@ -569,20 +569,21 @@ class AdjMatrixSequence(list):
         indices = zip(C.nonzero()[0], C.nonzero()[1])
         for i, j in indices:
             x[i + j] += C[i, j]
+
         return x
 
     def __random_combination(self, iterable, r, with_replacement=False):
         """ Random selection from
             itertools.combinations_with_replacement(iterable, r).
-            
+
             Parameters
             ----------
             iterable: iterable
                 list where samples are drawn from.
-            
+
             r: int
                 number of elements to be sampled
-            
+
             with_replacement: boolean (optional, default=False)
                 if True, combinations with i<=j<=k are returned, if False i<j<k.
         """
@@ -597,18 +598,18 @@ class AdjMatrixSequence(list):
     def clustering_matrix(self, limit=None, random_iterations=True, replacement=False):
         """ Computes the matrix of clustering coefficients of
             a matrix sequence.
-            
+
             Parameters
             ----------
             limit: int, optional (default=None)
                 Number of time steps to be considered.
-                
+
             random_iterations: Boolean, optional (default=True)
                 If True, sample time triples are considered
-                
+
             replacement: Boolean, optional (default=False)
                 If True, time indices follow the condition i=<j<=k, and i<j<k, if False.
-                
+
         """
         def triple_product(M1, M2, M3):
             # Product of three matrices
@@ -662,7 +663,7 @@ class AdjMatrixSequence(list):
         t_edges_set = set(t_edges)
         # remove double edges, if undirected
         if not self.is_directed:
-            print "removing bidirectional links..."
+            print("removing bidirectional links...")
             for (u, v, d) in t_edges:
                 if (v, u, d) in t_edges_set and (u, v, d) in t_edges_set:
                     t_edges_set.remove((v, u, d))
@@ -680,7 +681,7 @@ class AdjMatrixSequence(list):
     def matricesCreation(self):
         """ creates list of sparse matrices from input file """
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
-        _, _, days = np.array(zip(*edges))
+        _, _, days = np.array(list(zip(*edges)))
 
         if not self.first_day:
             self.first_day = min(days)
@@ -731,16 +732,16 @@ class AdjMatrixSequence(list):
 
         for i in range(1, len(self)):
             if verbose:
-                print 'unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz
+                print('unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz)
             self.bool_int_matrix(P)
             try:
                 P = P + P * self[i]
             except:
-                print 'Break at t = ', i
+                print('Break at t = ', i)
                 break
             cumu.append(P.nnz)
         else:
-            print '---> Unfolding complete.'
+            print('---> Unfolding complete.')
 
         if return_accessibility_matrix:
             P = P.astype('bool')
@@ -776,8 +777,8 @@ class AdjMatrixSequence(list):
         ranges = {}
 
         for node in range(self.number_of_nodes):
-            print 'Computing accessibility for node ', node+1,\
-                    ' of ', self.number_of_nodes
+            print('Computing accessibility for node ', node+1,\
+                    ' of ', self.number_of_nodes)
             single_node_SI = self.unfold_accessibility_single_node(node)
             all_paths += single_node_SI
             ranges[node] = single_node_SI[-1]
