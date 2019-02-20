@@ -6,6 +6,8 @@ Lentz et al., Phys. Rev. Lett. 110, 118701 (2013).
 
 Please cite this reference, if you use the software.
 
+This software has been written for **Python 3**. If you are using Python 2, please choose the branch *for Python2* on this website.
+
 ## Using the Software
 To compute the results of the paper, you only need the class *AdjMatrixSequence*.
 You can compute the Accessibility Matrix of a temporal network following these steps:
@@ -82,7 +84,7 @@ E.write("Randomized_edges_RE.txt")
 ```
 
 ## Required Software/packages:
-- Python 2.7 (should run on 2.6 as well)
+- Python 3.6 (should run on other 3.x versions as well)
 - scipy
 - numpy
 - Networkx package (optional, required for the configuration model).
