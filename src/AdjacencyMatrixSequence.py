@@ -485,7 +485,10 @@ class AdjMatrixSequence(list):
 
     def GST(self, return_copy=False):
         # alias
-        self.time_shuffled(return_copy)
+        if return_copy:
+            return self.time_shuffled(return_copy)
+        else:
+            self.time_shuffled(return_copy)
 
     def time_shuffled(self, return_copy=False):
         """ Shuffle times occurence times for each snapshot.
@@ -505,7 +508,10 @@ class AdjMatrixSequence(list):
 
     def TR(self, return_copy):
         # alias
-        self.time_reversed(return_copy)
+        if return_copy:
+            return self.time_reversed(return_copy)
+        else:
+            self.time_reversed(return_copy)
 
     def time_reversed(self, return_copy=False):
         """ reverts list and transposes elements
@@ -590,12 +596,13 @@ class AdjMatrixSequence(list):
         pool = tuple(iterable)
         n = len(pool)
         if with_replacement:
-            indices = sorted(random.randrange(n) for i in xrange(r))
+            indices = sorted(random.randrange(n) for i in range(r))
         else:
-            indices = sorted(random.sample(xrange(n), r))
+            indices = sorted(random.sample(range(n), r))
         return tuple(pool[i] for i in indices)
 
-    def clustering_matrix(self, limit=None, random_iterations=True, replacement=False):
+    def clustering_matrix(self, limit=None, random_iterations=True,
+                          replacement=False):
         """ Computes the matrix of clustering coefficients of
             a matrix sequence.
 
@@ -608,7 +615,8 @@ class AdjMatrixSequence(list):
                 If True, sample time triples are considered
 
             replacement: Boolean, optional (default=False)
-                If True, time indices follow the condition i=<j<=k, and i<j<k, if False.
+                If True, time indices follow the condition i <= j <= k, and
+                i < j < k, if False.
 
         """
         def triple_product(M1, M2, M3):
@@ -669,13 +677,13 @@ class AdjMatrixSequence(list):
                     t_edges_set.remove((v, u, d))
 
         # write file
-        g = file(fname, 'w+')
+        g = open(fname, 'w+')
         for e in t_edges_set:
             wstring = ''
             for j in range(1, len(e)):
                 wstring += '\t' + str(e[j])
             g.writelines((str(e[0]) + wstring + '\n'))
-        g.close
+        g.close()
         return
 
     def matricesCreation(self):
@@ -836,8 +844,49 @@ class AdjMatrixSequence(list):
         return cumu
 
 if __name__ == "__main__":
-    At = AdjMatrixSequence("../edgelists/sociopatterns_hypertext.dat",
-                           directed=True)
+    print("===== Testing Module AdjacencyMatrixSequence =====\n")
+    the_file = '../edgelists/Test.dat'
+    # the_file = "edgelists/sexual_contacts.dat"
+    At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
+
+    # compute accessibility
+    c = At.unfold_accessibility(return_accessibility_matrix=False)
+    h = np.gradient(c)
+
+    # Causal fidelity
+    causal_paths = c[-1]
+    static_paths = At.static_path_density()
+    # print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
+
+    At.info_scipy_version()
+    '''
+    x = At.all_time_windows()
+    x = At.deep_product()
+    x = At.long_paths_per_snapshot(3)
+    x = At.long_path_correction(3)
+    x = At.LCCs()
+    x = At.static_path_density()
+    x = At.step_by_step_static_path_density()
+    x = At.step_by_step_aggregation()
+    x = At.cumulated()
+    x = At.coarse_grain(2)
+    x = At.node_activity_series()
+    x = At.edge_activity_series()
+    x = At.shift_start_time(0)
+    x = At.GST() ### FIXME
+    x = At.time_reversed(True) ### FIXME alias TR
+    x = At.transpose()
+    x = At.as_undirected()
+    x = At.clustering_matrix(replacement=True) ### FIXME xrange in __random_combination
+    x = At.unfold_accessibility_memory_efficient()
+    x = At.unfold_accessibility_single_node(0)
+    x = At.trace_forward(0)
+    '''
+    x = At.GST(return_copy=False)
+
+    print(At)
+    print(x)
+    print("===== Test successful. =====")
     # print len(At), At[0]
     # At.coarse_grain(184)
     # print len(At), At[0]
