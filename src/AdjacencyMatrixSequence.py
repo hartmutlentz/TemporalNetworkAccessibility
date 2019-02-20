@@ -893,7 +893,7 @@ if __name__ == "__main__":
 
     print(At)
     print(x)
-    print("===== Test successful. =====")
+    print("===== Test for AdjacencyMatrixSequence successful. =====")
     # print len(At), At[0]
     # At.coarse_grain(184)
     # print len(At), At[0]

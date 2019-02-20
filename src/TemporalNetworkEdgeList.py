@@ -419,20 +419,30 @@ class TemporalEdgeList():
 if __name__ == "__main__":
     from pprint import pprint
     the_file = '../edgelists/Test.dat'
+
+    print("===== Testing Module TemporalEdgeList =====\n")
     E = TemporalEdgeList(the_file, True, timecolumn=2)
 
     print(E.snapshots[0])
     E.dilute(0.09)
     print(E.snapshots[0])
-    #print(len(E.edges))
-    #E=TemporalEdgeList("sociopatterns_113.dat",False)
-    #pprint(E.edges)
+
+    E = TemporalEdgeList(the_file, directed=True)
+    #x = E.edge_occurrence_times()
+    #x = E.node_occurrence_times()
+    E.GST()
+    E.LST()
+    E.TR()
+    # E.CM()
+    E.RE()
     #E.randomize_edges()
-    #E.random_times()
-    #print(E.average_size(),len(E.snapshots))
-    #print(len(E.edges))
+    x = E.number_of_nodes()
+    x = E.average_size()
+    E.random_times_uniform()
+    #E.write('temp.txt')
+    E.RT()
 
-    #E.write("out1_RE.txt")
+    print(x)
+    print(E.static_edges)
 
-    #print(E.edge_occurrence_times())
-    #print(E.shuffle_edge_times(E.edge_occurrence_times()))
+    print("===== Test for TemporalEdgeList successful. =====")
