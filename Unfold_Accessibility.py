@@ -10,6 +10,7 @@ import Tools
 
 # import an edgelist as sequence of adjacency matrices
 the_file = 'edgelists/Test.dat'
+the_file = "edgelists/sexual_contacts.dat"
 At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
 
 # compute accessibility
@@ -25,7 +26,7 @@ Tools.dict2file(h, "shortest_path_durations_histogram.txt")
 # Causal fidelity
 causal_paths = c[-1]
 static_paths = At.static_path_density()
-print "---> Causal fidelity is ", float(causal_paths)/float(static_paths)
+print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
 
 ### ALTERNATIVELY: read a temporal edge list and randomize it
 ### Details about randomization techniques are in Supplementary Material of
