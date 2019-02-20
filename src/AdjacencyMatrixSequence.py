@@ -11,6 +11,7 @@ from scipy.io import mmread
 import random
 import copy
 import itertools
+import sys
 
 
 class AdjMatrixSequence(list):
@@ -42,6 +43,12 @@ class AdjMatrixSequence(list):
         if not self.is_directed:
             self.as_undirected()
         self.number_of_nodes = scipy.shape(self[0])[0]
+        self.check_py_version()
+
+    def check_py_version(self):
+        assert sys.version_info > (3,), ("You are using python 2. Please use "
+                                         "python 3.\nPython 3.6 or greater is "
+                                         "recommended.")
 
     def copy(self):
         """ alias """
@@ -859,7 +866,7 @@ if __name__ == "__main__":
     # print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
 
     At.info_scipy_version()
-    '''
+
     x = At.all_time_windows()
     x = At.deep_product()
     x = At.long_paths_per_snapshot(3)
@@ -881,7 +888,7 @@ if __name__ == "__main__":
     x = At.unfold_accessibility_memory_efficient()
     x = At.unfold_accessibility_single_node(0)
     x = At.trace_forward(0)
-    '''
+
     x = At.GST(return_copy=False)
 
     print(At)
