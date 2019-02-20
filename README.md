@@ -6,7 +6,7 @@ Lentz et al., Phys. Rev. Lett. 110, 118701 (2013).
 
 Please cite this reference, if you use the software.
 
-This software has been written for **Python 2** and discontinued. If you are using Python 3 (recommended), please choose the branch ```master``` on this website.
+This software has been written for **Python 2** and is discontinued. If you are using Python 3 (recommended), please choose the branch *master* on this website.
 
 ## Using the Software
 To compute the results of the paper, you only need the class *AdjMatrixSequence*.
