@@ -710,10 +710,10 @@ class AdjMatrixSequence(list):
         # get dictionary of new indices and write map-file
         re_dct = self.reindex(edges)
         if self.label_file:
-            g = file('oldindex_matrixfriendly.txt', 'w+')
+            g = open('oldindex_matrixfriendly.txt', 'w+')
             for k in re_dct:
                 g.writelines((str(k) + '\t' + str(re_dct[k]) + '\n'))
-            g.close
+            g.close()
 
         # reindex using this dictionary
         edges = [(re_dct[u], re_dct[v], d) for u, v, d in edges]
@@ -863,7 +863,7 @@ if __name__ == "__main__":
     # Causal fidelity
     causal_paths = c[-1]
     static_paths = At.static_path_density()
-    # print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
+    print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
 
     At.info_scipy_version()
 
@@ -880,11 +880,11 @@ if __name__ == "__main__":
     x = At.node_activity_series()
     x = At.edge_activity_series()
     x = At.shift_start_time(0)
-    x = At.GST() ### FIXME
-    x = At.time_reversed(True) ### FIXME alias TR
+    x = At.GST()
+    x = At.time_reversed(True)
     x = At.transpose()
     x = At.as_undirected()
-    x = At.clustering_matrix(replacement=True) ### FIXME xrange in __random_combination
+    x = At.clustering_matrix(replacement=True)
     x = At.unfold_accessibility_memory_efficient()
     x = At.unfold_accessibility_single_node(0)
     x = At.trace_forward(0)
