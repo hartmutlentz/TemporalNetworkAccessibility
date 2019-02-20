@@ -130,7 +130,7 @@ class TemporalEdgeList():
 
     def shuffle_snapshot_times(self):
         # shuffles all snapshots
-        new_keys = (self.snapshots).keys()
+        new_keys = list((self.snapshots).keys())
         random.shuffle(new_keys)
 
         new_t_edges = {}
@@ -175,7 +175,7 @@ class TemporalEdgeList():
 
     def time_reversal(self):
         # revert time stamps
-        new_keys = range(self.mintime, self.maxtime+1)
+        new_keys = list(range(self.mintime, self.maxtime+1))
 
         new_snapshots = {}
         for i in self.possible_times:
@@ -210,8 +210,10 @@ class TemporalEdgeList():
             Number of edges is not conserved!
         """
         if G_in.is_directed():
-            inseq = G_in.in_degree().values()
-            outseq = G_in.out_degree().values()
+            # inseq = list(G_in.in_degree().values())
+            inseq = [k for k, v in G_in.in_degree]
+            # outseq = list(G_in.out_degree().values())
+            outseq = [k for k, v in G_in.out_degree]
 
             H = nx.directed_configuration_model(inseq, outseq)
             H = nx.DiGraph(H)
@@ -331,7 +333,7 @@ class TemporalEdgeList():
         self.static_edges = self.__get_static_edges()
 
     def number_of_nodes(self):
-        return len(self.nodes)
+        return len(self.nodes())
 
     def nodes(self):
         # the nodes of the network as set.
@@ -346,13 +348,13 @@ class TemporalEdgeList():
         """ writes self to txtfile.
         """
         arr = self.edges
-        g = file(fname, 'w+')
+        g = open(fname, 'w+')
         for i in range(len(arr)):
             wstring = ''
             for j in range(1, len(arr[i])):
                 wstring += '\t' + str(arr[i][j])
             g.writelines((str(arr[i][0]) + wstring + '\n'))
-        g.close
+        g.close()
 
         return
 
@@ -393,7 +395,7 @@ class TemporalEdgeList():
         """
         sizes = dict([(i, len(self.snapshots[i])) for i in self.snapshots])
         # new permutation of edge densities
-        new_keys = sizes.keys()
+        new_keys = list(sizes.keys())
         random.shuffle(new_keys)
 
         new_sizes = {}
