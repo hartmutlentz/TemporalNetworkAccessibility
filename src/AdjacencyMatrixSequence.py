@@ -740,23 +740,27 @@ class AdjMatrixSequence(list):
         """ Unfold accessibility storing path density.
 
         """
+        verboseprint = print if verbose else lambda *a, **k: None
+
         P = self[0].copy()
         D = sp.identity(self.number_of_nodes, dtype=np.int32)
         P = P + D
         cumu = [P.nnz]
 
         for i in range(1, len(self)):
-            if verbose:
-                print('unfolding accessibility. Step ', i, 'non-zeros: ', P.nnz)
+            #if verbose:
+            # verboseprint('unfolding accessibility. Step ', i, 'non-zeros: ',
+            #             P.nnz)
+            verboseprint(i, end=" ")
             self.bool_int_matrix(P)
             try:
                 P = P + P * self[i]
             except:
-                print('Break at t = ', i)
+                print('\nBreak at t = ', i)
                 break
             cumu.append(P.nnz)
         else:
-            print('---> Unfolding complete.')
+            print('\n---> Unfolding complete.')
 
         if return_accessibility_matrix:
             P = P.astype('bool')

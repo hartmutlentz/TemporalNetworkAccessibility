@@ -11,7 +11,8 @@ import Tools
 # import an edgelist as sequence of adjacency matrices
 the_file = 'edgelists/Test.dat'
 the_file = "edgelists/sexual_contacts.dat"
-At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
+the_file = "edgelists/livestock_trade.csv"
+At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 
 # compute accessibility
 c = At.unfold_accessibility(return_accessibility_matrix=False)
