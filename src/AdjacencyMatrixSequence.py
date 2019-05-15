@@ -827,6 +827,30 @@ class AdjMatrixSequence(list):
 
         return np.array(cumu)
 
+    def unfold_accessibility_multi_nodes(self, start):
+        """ Accessibility of multiple, but not all, nodes. Returns a numpy
+            vector containing the number of nonzeros for every timestep.
+        """
+        # init
+        row = np.zeros(len(start))
+        col = np.array(start)
+        data = np.ones(len(start))
+
+        x = sp.coo_matrix((data, (row, col)),
+                          shape=(1, self.number_of_nodes), dtype=int)
+        x = x.tocsr()
+
+        # these 2 lines are not in the for-loop to be
+        # optically consistent with the matrix version.
+        x = x + x * self[0]
+        cumu = [x.nnz]
+
+        for t in range(1, len(self)):
+            x = x + x * self[t]
+            cumu.append(x.nnz)
+
+        return np.array(cumu)
+
     def trace_forward(self, start, stop=None):
         """ same as unfold_accessibility_single_node, but returns all
             nodes reached during traversal.
