@@ -854,6 +854,43 @@ class AdjMatrixSequence(list):
 
         return cumu
 
+    def trace_forward_multiple_sources(self, start , stop=None):
+        """ Tracing forward for multiple starting nodes.
+
+            Parameters
+            ----------
+            start : iterable
+
+            stop (optional) : stop time, default = infty
+        """
+        if not stop:
+            maxtime = len(self)
+
+        # init
+        row = np.zeros(len(start))
+        col = np.array(start)
+        data = np.ones(len(start))
+
+        x = sp.coo_matrix((data, (row, col)),
+                          shape=(1, self.number_of_nodes), dtype=int)
+        x = x.tocsr()
+
+        # these 2 lines are not in the for-loop to be
+        # optically consistent with the matrix version.
+        x = x + x * self[0]
+        cumu = {}
+
+        x = x.tocoo()
+        cumu[0] = set(x.col)
+
+        for t in range(1, maxtime):
+            x = x + x * self[t]
+            x = x.tocoo()
+            cumu[t] = set(x.col)
+
+        return cumu
+
+
 if __name__ == "__main__":
     print("===== Testing Module AdjacencyMatrixSequence =====\n")
     the_file = '../edgelists/Test.dat'
