@@ -1,6 +1,7 @@
 # TemporalNetworkAccessibility
 
-Provides classes used for computing the results of the Papers  
+Provides classes used for computing the results of the Papers
+
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
 Lentz et al., Phys. Rev. Lett. 110, 118701 (2013)
 
