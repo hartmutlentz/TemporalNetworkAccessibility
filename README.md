@@ -1,10 +1,15 @@
 # TemporalNetworkAccessibility
 
-Provides classes used for computing the results of the Paper  
+Provides classes used for computing the results of the Papers  
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
-Lentz et al., Phys. Rev. Lett. 110, 118701 (2013).
+Lentz et al., Phys. Rev. Lett. 110, 118701 (2013)
 
-Please cite this reference, if you use the software.
+and
+
+**Disease Spread through Animal Movements: A Static and Temporal Network Analysis of Pig Trade in Germany**,
+Lentz et al., PLOS ONE 11, e0155196–32 (2016)
+
+Please cite the first reference (Phys. Rev. Lett.), if you use the software.
 
 This software has been written for **Python 3**. If you are using Python 2, please choose the branch *forPython2* on this website.
 
