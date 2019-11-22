@@ -152,7 +152,7 @@ class AdjMatrixSequence(list):
 
         for i in range(start+twindow, len(self)-twindow, twindow):
             C = C * self[i]
-            links[i] = C.nnz()
+            links[i] = C.nnz
             if C.nnz == 0:
                 break
 
@@ -329,7 +329,7 @@ class AdjMatrixSequence(list):
         Example
         -------
         >>> # At = AdjMatrixSequence(<...>)
-        >>> # This method actually works in an At-Object only.
+        >>> # This method works in an At-Object only.
         >>> A = sp.lil_matrix((5,5))
         >>> A[0,1] = 1
         >>> A[4,0] = 1
@@ -919,9 +919,9 @@ class AdjMatrixSequence(list):
 
 if __name__ == "__main__":
     print("===== Testing Module AdjacencyMatrixSequence =====\n")
-    the_file = '../edgelists/Test.dat'
-    # the_file = "edgelists/sexual_contacts.dat"
-    At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
+    # the_file = '../edgelists/Test.dat'
+    the_file = "../edgelists/sociopatterns_hypertext.dat"
+    At = AdjMatrixSequence(the_file, directed=False, write_label_file=False)
 
     # compute accessibility
     c = At.unfold_accessibility(return_accessibility_matrix=False)
@@ -931,6 +931,11 @@ if __name__ == "__main__":
     causal_paths = c[-1]
     static_paths = At.static_path_density()
     print("---> Causal fidelity is ", float(causal_paths)/float(static_paths))
+
+    # full causal fidelity
+    c2 = At.step_by_step_static_path_density()
+    c_ff = [c[i]/c2[i] for i in range(len(c))]
+    print("---> Functional form of causal fidelity computed")
 
     At.info_scipy_version()
 
