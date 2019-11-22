@@ -64,7 +64,7 @@ class AdjMatrixSequence(list):
         This is necessary for handling very large sparse matrices.
         For scipy versions < 0.14.0. the variables indptr and indices are
         stored as int32. Thus, the number of non-zero entries is restricted to
-        2^31 \sim 10^9 elements.
+        2^31 ~ 10^9 elements.
         Returns True, if installed Version > ref. False otherwise.
 
         """
@@ -84,7 +84,7 @@ class AdjMatrixSequence(list):
         """ Print information about scipy version and maximum Matrix size. """
         if self.__scipy_version_for_large_matrices():
             print("Scipy version can handle matrices with more than " +
-                   "2^31 nonzero elements.")
+                  "2^31 nonzero elements.")
         else:
             print("Number of nonzero elements is restricted to 2^31.")
 
@@ -166,8 +166,8 @@ class AdjMatrixSequence(list):
         """ The size of the L(S)CC of a matrix.
             Note that the matrices here are interpreted as (bi)directed nets.
         """
-        n, l = sp.csgraph.connected_components(A, connection='strong')
-        lcc_size = np.max(np.bincount(l))
+        n, m = sp.csgraph.connected_components(A, connection='strong')
+        lcc_size = np.max(np.bincount(m))
         if lcc_size == 1:
             return 0.0
         else:
@@ -201,7 +201,7 @@ class AdjMatrixSequence(list):
         return d
 
     def long_path_correction(self, diameter):
-        """ replace A_i by \sum _{i=1} ^diameter A_i. This takes into account
+        """ replace A_i by sum _{i=1} ^diameter A_i. This takes into account
             paths of length > 1 in each snapshot.
             See
                 Grindrod et al.
@@ -217,8 +217,8 @@ class AdjMatrixSequence(list):
 
             self[i] = M
 
-        print("---> paths up to length ", diameter, \
-            " are now considered in snapshots.")
+        print("---> paths up to length ", diameter,
+              " are now considered in snapshots.")
 
         return
 
@@ -476,8 +476,9 @@ class AdjMatrixSequence(list):
         return da
 
     def shift_start_time(self, new_start_time, return_copy=False):
-        """ Returns list of adjacency matrices with new ordering, beginning with
-            Index new_start_time using periodic boundary conditions.
+        """ Returns list of adjacency matrices with new ordering,
+            beginning with Index new_start_time using periodic boundary
+            conditions.
         """
         assert new_start_time <= len(self)-1, \
             'new_start_time must be in network observation time.'
@@ -598,7 +599,8 @@ class AdjMatrixSequence(list):
                 number of elements to be sampled
 
             with_replacement: boolean (optional, default=False)
-                if True, combinations with i<=j<=k are returned, if False i<j<k.
+                if True, combinations with i<=j<=k are returned,
+                if False i<j<k.
         """
         pool = tuple(iterable)
         n = len(pool)
@@ -748,7 +750,7 @@ class AdjMatrixSequence(list):
         cumu = [P.nnz]
 
         for i in range(1, len(self)):
-            #if verbose:
+            # if verbose:
             # verboseprint('unfolding accessibility. Step ', i, 'non-zeros: ',
             #             P.nnz)
             verboseprint(i, end=" ")
@@ -796,8 +798,8 @@ class AdjMatrixSequence(list):
         ranges = {}
 
         for node in range(self.number_of_nodes):
-            print('Computing accessibility for node ', node+1,\
-                    ' of ', self.number_of_nodes)
+            print('Computing accessibility for node ', node+1,
+                  ' of ', self.number_of_nodes)
             single_node_SI = self.unfold_accessibility_single_node(node)
             all_paths += single_node_SI
             ranges[node] = single_node_SI[-1]
@@ -878,7 +880,7 @@ class AdjMatrixSequence(list):
 
         return cumu
 
-    def trace_forward_multiple_sources(self, start , stop=None):
+    def trace_forward_multiple_sources(self, start, stop=None):
         """ Tracing forward for multiple starting nodes.
 
             Parameters
