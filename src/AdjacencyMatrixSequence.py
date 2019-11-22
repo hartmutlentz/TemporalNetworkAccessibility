@@ -345,13 +345,15 @@ class AdjMatrixSequence(list):
         """
         return self.path_density_of_A(self.cumulated(), normalize)
 
-    def step_by_step_static_path_density(self, ende=None):
+    def step_by_step_static_path_density(self, ende=None, verbose=False):
         """ Returns list. [index=Aggregation depth: static path density]
 
         """
+        verboseprint = print if verbose else lambda *a, **k: None
+
         pd = []
         for i, Cn in enumerate(self.step_by_step_aggregation(ende)):
-            print('Static path density. Step ', i)
+            verboseprint('Static path density. Step ', i)
             pd.append(self.path_density_of_A(Cn))
 
         return pd
