@@ -741,7 +741,7 @@ class AdjMatrixSequence(list):
         # c=[]
 
         if random_iterations:
-            for l in range(random_iterations):
+            for _ in range(random_iterations):
                 (i, j, k) = \
                     self.__random_combination(domain, 3, replacement)
                 trace, c_norm = triple_product(self[i], self[j], self[k])
