@@ -39,7 +39,7 @@ class AdjMatrixSequence(list):
         self.label_file = write_label_file
         self.is_directed = directed
 
-        self.matricesCreation()
+        self.create_matrices()
         if not self.is_directed:
             self.as_undirected()
         self.number_of_nodes = np.shape(self[0])[0]
@@ -565,11 +565,11 @@ class AdjMatrixSequence(list):
         """
         Removes edges from the network randomly with probability 1-p.
         Thus, p is the probablity that an edge remains in the network.
-        CAUTION: In-place operation.
+        CAUTION: In-place operation. Make a copy first.
 
         Parameters
         ----------
-        p : floar, optional
+        p : float, optional
             Probability for an edge to remain in the network.
             The default is 0.5.
 
@@ -785,7 +785,7 @@ class AdjMatrixSequence(list):
         g.close()
         return
 
-    def matricesCreation(self):
+    def create_matrices(self):
         """ creates list of sparse matrices from input file """
         edges = loadtxt(self.fname, dtype=int, usecols=self.cols)
         _, _, days = np.array(list(zip(*edges)))
