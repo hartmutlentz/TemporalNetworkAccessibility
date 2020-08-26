@@ -57,6 +57,24 @@ class AdjMatrixSequence(list):
     def deepcopy(self):
         """ alias """
         return copy.deepcopy(self)
+    
+    def __str__(self):
+        """
+        Magic method for printing.
+
+        Returns
+        -------
+        str
+            description.
+
+        """
+        
+        a = "Temporal network stored as AdjMatrixSequence.\n"
+        b = "Number of nodes: " + str(self.number_of_nodes) + "; "
+        c = "Number of edges: " + str(self.get_number_of_edges()) + "; "
+        d = "Time steps: " + str(self.last_day - self.first_day)
+        
+        return a + b + c + d
 
     def __scipy_version_for_large_matrices(self, ref="0.14.0"):
         """
@@ -130,6 +148,21 @@ class AdjMatrixSequence(list):
         return (scipy.stats.scoreatpercentile(prop_corr, 25),
                 scipy.stats.scoreatpercentile(prop_corr, 50),
                 scipy.stats.scoreatpercentile(prop_corr, 75))
+    
+    def get_number_of_edges(self):
+        """
+        Returns total number of edges.
+
+        Returns
+        -------
+        int
+            number of edges.
+
+        """
+        
+        edges = [A.nnz for A in self]
+        
+        return sum(edges)
 
     def two_link_density(self, index1, index2, norm=True):
         """ the link density for 2 step paths """
@@ -529,7 +562,22 @@ class AdjMatrixSequence(list):
         return B
     
     def dilute(self, p=0.5):
-        
+        """
+        Removes edges from the network randomly with probability 1-p.
+        Thus, p is the probablity that an edge remains in the network.
+        CAUTION: In-place operation.
+
+        Parameters
+        ----------
+        p : floar, optional
+            Probability for an edge to remain in the network.
+            The default is 0.5.
+
+        Returns
+        -------
+        None.
+
+        """
         for i in range(len(self)):
             self[i] = self.random_submatrix(self[i], p)
 
