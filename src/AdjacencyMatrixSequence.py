@@ -29,6 +29,7 @@ class AdjMatrixSequence(list):
     [0..number_of_nodes].
 
     """
+
     def __init__(self, edgelist_fname, directed, write_label_file=False,
                  columns=(0, 1, 2), firsttime=None, lasttime=None):
         list.__init__(self)
@@ -57,7 +58,7 @@ class AdjMatrixSequence(list):
     def deepcopy(self):
         """ alias """
         return copy.deepcopy(self)
-    
+
     def __str__(self):
         """
         Magic method for printing.
@@ -68,12 +69,12 @@ class AdjMatrixSequence(list):
             description.
 
         """
-        
+
         a = "Temporal network stored as AdjMatrixSequence.\n"
         b = "Number of nodes: " + str(self.number_of_nodes) + "; "
         c = "Number of edges: " + str(self.get_number_of_edges()) + "; "
         d = "Time steps: " + str(self.last_day - self.first_day)
-        
+
         return a + b + c + d
 
     def __scipy_version_for_large_matrices(self, ref="0.14.0"):
@@ -148,7 +149,7 @@ class AdjMatrixSequence(list):
         return (scipy.stats.scoreatpercentile(prop_corr, 25),
                 scipy.stats.scoreatpercentile(prop_corr, 50),
                 scipy.stats.scoreatpercentile(prop_corr, 75))
-    
+
     def get_number_of_edges(self):
         """
         Returns total number of edges.
@@ -159,9 +160,9 @@ class AdjMatrixSequence(list):
             number of edges.
 
         """
-        
+
         edges = [A.nnz for A in self]
-        
+
         return sum(edges)
 
     def two_link_density(self, index1, index2, norm=True):
@@ -305,7 +306,7 @@ class AdjMatrixSequence(list):
         """ Return the path density of a network given by adjacency matrix A.
             Selfloops are explicitely included.
         """
-        n = A.shape[0] #scipy.shape(A)[0]
+        n = A.shape[0]  # scipy.shape(A)[0]
         all_nodes = set(range(n))
 
         lscc_nodes = self.LSCC_nodes(A)
@@ -525,12 +526,12 @@ class AdjMatrixSequence(list):
         else:
             self.extend(self[:new_start_time])
             del self[:new_start_time]
-            
+
     def random_submatrix(self, A, p=0.5):
         """
         Returns a random subset of a sparse matrix. Dimension is not changed.
         Output-values are Boolean, i.e. 1 (int).
-        
+
         Parameters
         ----------
         A : scipy sparse matrix
@@ -538,29 +539,30 @@ class AdjMatrixSequence(list):
         p : float, optional
             probability that an entry remains in the matrix. Thus, 1-p is the
             removal probability. The default is 0.5.
-    
+
         Returns
         -------
         B : scipy sparse csr matrix
-            A matrix containing a random subset of the input. Dimension is not 
+            A matrix containing a random subset of the input. Dimension is not
             changed.
-    
+
         """
-        assert p<=1.0 and p>=0.0, "p is a probability and must be 0 <= p <= 1."
-        
+        assert p <= 1.0 and p >= 0.0, "p is a probability and must be\
+            0 <= p <= 1."
+
         indices = np.column_stack(A.nonzero())
         number_of_samples = round(indices.shape[0] * p)
-        
+
         index_sample = np.random.choice(indices.shape[0], number_of_samples,
                                         replace=False)
         rows_and_columns = indices[index_sample, :]
-        
+
         row, col = rows_and_columns.T
         data = np.ones(len(row), dtype=int)
         B = sp.csr_matrix((data, (row, col)), shape=A.shape)
-        
+
         return B
-    
+
     def dilute(self, p=0.5):
         """
         Removes edges from the network randomly with probability 1-p.
@@ -840,9 +842,6 @@ class AdjMatrixSequence(list):
         cumu = [P.nnz]
 
         for i in range(1, len(self)):
-            # if verbose:
-            # verboseprint('unfolding accessibility. Step ', i, 'non-zeros: ',
-            #             P.nnz)
             verboseprint(i, end=" ")
             self.bool_int_matrix(P)
             try:
