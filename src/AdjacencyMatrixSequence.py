@@ -42,7 +42,7 @@ class AdjMatrixSequence(list):
         self.matricesCreation()
         if not self.is_directed:
             self.as_undirected()
-        self.number_of_nodes = scipy.shape(self[0])[0]
+        self.number_of_nodes = np.shape(self[0])[0]
         self.check_py_version()
 
     def check_py_version(self):
@@ -116,7 +116,7 @@ class AdjMatrixSequence(list):
             mw = len(self)
 
         for twindow in range(mw):
-            print(twindow)
+            print("All time windows:", twindow)
             p_corr[twindow] = self.single_time_window(twindow)
         return p_corr
 
@@ -272,7 +272,7 @@ class AdjMatrixSequence(list):
         """ Return the path density of a network given by adjacency matrix A.
             Selfloops are explicitely included.
         """
-        n = scipy.shape(A)[0]
+        n = A.shape[0] #scipy.shape(A)[0]
         all_nodes = set(range(n))
 
         lscc_nodes = self.LSCC_nodes(A)
@@ -492,6 +492,46 @@ class AdjMatrixSequence(list):
         else:
             self.extend(self[:new_start_time])
             del self[:new_start_time]
+            
+    def random_submatrix(self, A, p=0.5):
+        """
+        Returns a random subset of a sparse matrix. Dimension is not changed.
+        Output-values are Boolean, i.e. 1 (int).
+        
+        Parameters
+        ----------
+        A : scipy sparse matrix
+            An adjacency matrix or any other sparse matrix.
+        p : float, optional
+            probability that an entry remains in the matrix. Thus, 1-p is the
+            removal probability. The default is 0.5.
+    
+        Returns
+        -------
+        B : scipy sparse csr matrix
+            A matrix containing a random subset of the input. Dimension is not 
+            changed.
+    
+        """
+        assert p<=1.0 and p>=0.0, "p is a probability and must be 0 <= p <= 1."
+        
+        indices = np.column_stack(A.nonzero())
+        number_of_samples = round(indices.shape[0] * p)
+        
+        index_sample = np.random.choice(indices.shape[0], number_of_samples,
+                                        replace=False)
+        rows_and_columns = indices[index_sample, :]
+        
+        row, col = rows_and_columns.T
+        data = np.ones(len(row), dtype=int)
+        B = sp.csr_matrix((data, (row, col)), shape=A.shape)
+        
+        return B
+    
+    def dilute(self, p=0.5):
+        
+        for i in range(len(self)):
+            self[i] = self.random_submatrix(self[i], p)
 
     def GST(self, return_copy=False):
         # alias
@@ -812,7 +852,7 @@ class AdjMatrixSequence(list):
             return all_paths
 
     def unfold_accessibility_single_node(self, start):
-        """ Accessibility of one node. Returns a numpy vector containing
+        """ Accessibility of one node. Returns a numpy array containing
             the number of nonzeros for every timestep.
         """
         # init
@@ -833,7 +873,7 @@ class AdjMatrixSequence(list):
 
     def unfold_accessibility_multi_nodes(self, start):
         """ Accessibility of multiple, but not all, nodes. Returns a numpy
-            vector containing the number of nonzeros for every timestep.
+            array containing the number of nonzeros for every timestep.
         """
         # init
         row = np.zeros(len(start))
@@ -941,7 +981,7 @@ if __name__ == "__main__":
 
     At.info_scipy_version()
 
-    x = At.all_time_windows()
+    # x = At.all_time_windows()
     x = At.deep_product()
     x = At.long_paths_per_snapshot(3)
     x = At.long_path_correction(3)
