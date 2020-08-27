@@ -904,7 +904,7 @@ class AdjMatrixSequence(list):
             self.bool_int_matrix(P)
             try:
                 P = P + P * self[i]
-            except:
+            except (KeyboardInterrupt, SystemExit, MemoryError):
                 print('\nBreak at t = ', i)
                 break
             cumu.append(P.nnz)
