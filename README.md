@@ -15,8 +15,11 @@ Please cite the first reference (Phys. Rev. Lett.), if you use the software.
 This software has been written for **Python 3**. If you are using Python 2, please choose the branch *forPython2* on this website.
 
 ## Using the Software
-To compute the results of the paper, you only need the class *AdjMatrixSequence*.
-You can compute the Accessibility Matrix of a temporal network following these steps:
+To compute the results of the papers, you only need the class *AdjMatrixSequence*. You can compute the Accessibility Matrix of a temporal network following the steps below.
+
+For a first overview, use the ```Tutorial.ipynb``` notebook. The notebook works using the ```jupyter notebook``` command on your local machine. (If you want to see the online version and it does  not render correctly, please open [https://nbviewer.jupyter.org/](https://nbviewer.jupyter.org/) and paste the [whole url of the notebook](https://github.com/hartmutlentz/TemporalNetworkAccessibility/blob/master/Tutorial.ipynb) there). 
+
+To compute the Accessibility Matrix of a temporal network, follow the steps:
 
 ### Step 1
 ```python
