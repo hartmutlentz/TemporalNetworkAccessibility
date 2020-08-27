@@ -1079,7 +1079,7 @@ class AdjMatrixSequence(list):
         But returns all nodes reached during traversal.
         """
         if not stop:
-            maxtime = len(self)
+            stop = len(self)
 
         # init
         x = sp.coo_matrix(([1], ([0], [start])),
@@ -1094,7 +1094,7 @@ class AdjMatrixSequence(list):
         x = x.tocoo()
         cumu[0] = set(x.col)
 
-        for t in range(1, maxtime):
+        for t in range(1, stop):
             x = x + x * self[t]
             x = x.tocoo()
             cumu[t] = set(x.col)
