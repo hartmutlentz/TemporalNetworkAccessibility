@@ -1,4 +1,13 @@
 #! /usr/bin/python
+"""
+Provides Class AdjMatrixSequence temporal network analysis.
+
+Networks are represented as a sequence of adjacency matrices and each matrix
+is a snapshot of the network.
+
+Author: Hartmut H. K. Lentz
+https://github.com/hartmutlentz/TemporalNetworkAccessibility
+"""
 
 from scipy.sparse import csr_matrix, lil_matrix
 import scipy.sparse as sp
@@ -997,6 +1006,71 @@ class AdjMatrixSequence(list):
             cumu.append(x.nnz)
 
         return np.array(cumu)
+
+    def unfold_accessibility_with_sentinels(self, sentinels, start_node=None,
+                                            stop_at_detection=False):
+        """
+        Unfold the accessibility graph including sentinel nodes.
+
+        Sentinel nodes are for disease detection. The method returns the
+        arrival times of an epidemic at the *sentinels* starting at
+        *start_node*. In order to simulate SI-like spreading the network
+        should be diluted.
+
+        Parameters
+        ----------
+        sentinels : list
+            list of sentinel nodes.
+        start_node : int, optional
+            index node of the epidemic. The default is None. If default is used
+            staring node is chosen at random.
+        stop_at_detection : Boolean, optional
+            If true, the epidemic is stopped, when it arrives at any sentonel
+            node. The default is False.
+
+        Returns
+        -------
+        Dictionary. Keys are sentinel nodes and values are arrival times.
+
+        """
+        if start_node:
+            start = start_node
+        else:
+            start = np.random.randint(self.number_of_nodes)
+        print("Starting epidemic at node ", start)
+
+        # state array
+        x = sp.csr_matrix(([1], ([0], [start])),
+                          shape=(1, self.number_of_nodes), dtype=int)
+
+        # sentinels array
+        row = np.zeros(len(sentinels))
+        col = np.array(sentinels)
+        data = np.ones(len(sentinels))
+        sen_nodes = sp.csr_matrix((data, (row, col)),
+                                  shape=(1, self.number_of_nodes), dtype=int)
+
+        # sentinel arrival time dict
+        arrival_times = dict()
+
+        if stop_at_detection:
+            for t in range(len(self)):
+                x = x + x * self[t]
+                if (x.multiply(sen_nodes)).nnz > 0:
+                    infected_sentinels = set((x.multiply(sen_nodes) != 0)
+                                             .nonzero()[1])
+                    arrival_times.update({node: t for node in
+                                          infected_sentinels})
+                    break
+        else:
+            for t in range(len(self)):
+                x = x + x * self[t]
+                infected_sentinels = set((x.multiply(sen_nodes) != 0)
+                                         .nonzero()[1])
+                new_infected = infected_sentinels - arrival_times.keys()
+                arrival_times.update({node: t for node in new_infected})
+
+        return arrival_times
 
     def trace_forward(self, start, stop=None):
         """
