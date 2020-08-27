@@ -1076,7 +1076,7 @@ class AdjMatrixSequence(list):
 
         return arrival_times
 
-    def trace_forward(self, start, stop=None):
+    def trace_forward(self, start_node, start_time=0, stop=None):
         """
         Similar to unfold_accessibility_single_node.
 
@@ -1086,19 +1086,19 @@ class AdjMatrixSequence(list):
             stop = len(self)
 
         # init
-        x = sp.coo_matrix(([1], ([0], [start])),
+        x = sp.coo_matrix(([1], ([0], [start_node])),
                           shape=(1, self.number_of_nodes), dtype=int)
         x = x.tocsr()
 
         # these 2 lines are not in the for-loop to be
         # optically consistent with the matrix version.
-        x = x + x * self[0]
+        # x = x + x * self[0]
         cumu = {}
 
-        x = x.tocoo()
-        cumu[0] = set(x.col)
+        # x = x.tocoo()
+        # cumu[0] = set(x.col)
 
-        for t in range(1, stop):
+        for t in range(start_time, stop):
             x = x + x * self[t]
             x = x.tocoo()
             cumu[t] = set(x.col)
