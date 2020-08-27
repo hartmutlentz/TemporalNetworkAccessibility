@@ -1007,7 +1007,9 @@ class AdjMatrixSequence(list):
 
         return np.array(cumu)
 
-    def unfold_accessibility_with_sentinels(self, sentinels, start_node=None,
+    def unfold_accessibility_with_sentinels(self, sentinels,
+                                            start_node=None,
+                                            start_time=0,
                                             stop_at_detection=False):
         """
         Unfold the accessibility graph including sentinel nodes.
@@ -1024,6 +1026,8 @@ class AdjMatrixSequence(list):
         start_node : int, optional
             index node of the epidemic. The default is None. If default is used
             staring node is chosen at random.
+        start_time : int, optional
+            starting time for the epidemic. The default is 0.
         stop_at_detection : Boolean, optional
             If true, the epidemic is stopped, when it arrives at any sentonel
             node. The default is False.
@@ -1054,7 +1058,7 @@ class AdjMatrixSequence(list):
         arrival_times = dict()
 
         if stop_at_detection:
-            for t in range(len(self)):
+            for t in range(start_time, len(self)):
                 x = x + x * self[t]
                 if (x.multiply(sen_nodes)).nnz > 0:
                     infected_sentinels = set((x.multiply(sen_nodes) != 0)
@@ -1063,7 +1067,7 @@ class AdjMatrixSequence(list):
                                           infected_sentinels})
                     break
         else:
-            for t in range(len(self)):
+            for t in range(start_time, len(self)):
                 x = x + x * self[t]
                 infected_sentinels = set((x.multiply(sen_nodes) != 0)
                                          .nonzero()[1])
