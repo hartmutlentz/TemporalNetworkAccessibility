@@ -1034,7 +1034,8 @@ class AdjMatrixSequence(list):
 
         Returns
         -------
-        Dictionary. Keys are sentinel nodes and values are arrival times.
+        Dictionary. Keys are sentinel nodes and values are tuples with
+        (arrival time, outbreak size).
 
         """
         if start_node:
@@ -1063,7 +1064,7 @@ class AdjMatrixSequence(list):
                 if (x.multiply(sen_nodes)).nnz > 0:
                     infected_sentinels = set((x.multiply(sen_nodes) != 0)
                                              .nonzero()[1])
-                    arrival_times.update({node: t for node in
+                    arrival_times.update({node: (t, x.nnz) for node in
                                           infected_sentinels})
                     break
         else:
@@ -1072,7 +1073,8 @@ class AdjMatrixSequence(list):
                 infected_sentinels = set((x.multiply(sen_nodes) != 0)
                                          .nonzero()[1])
                 new_infected = infected_sentinels - arrival_times.keys()
-                arrival_times.update({node: t for node in new_infected})
+                arrival_times.update({node: (t, x.nnz) for node in
+                                      new_infected})
 
         return arrival_times
 
