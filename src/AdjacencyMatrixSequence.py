@@ -1038,7 +1038,12 @@ class AdjMatrixSequence(list):
         (arrival time, outbreak size).
 
         """
-        if start_node:
+        # raise error if sentinel node not in network
+        if max(sentinels) >= self.number_of_nodes:
+            raise ValueError("Sentinel node not in network.")
+
+        # set start_node for epidemic
+        if start_node or start_node is 0:
             start = start_node
         else:
             start = np.random.randint(self.number_of_nodes)
