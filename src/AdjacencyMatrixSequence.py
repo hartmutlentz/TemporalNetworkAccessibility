@@ -898,7 +898,7 @@ class AdjMatrixSequence(list):
 
         P = self[0].copy()
         P.multiply(csr_matrix((
-            np.random.random_sample(P.data.shape)<p, P.indices, P.indptr),
+            np.random.random_sample(P.data.shape) < p, P.indices, P.indptr),
             shape=P.shape))
 
         D = sp.identity(self.number_of_nodes, dtype=np.int32)
@@ -910,7 +910,7 @@ class AdjMatrixSequence(list):
             self.bool_int_matrix(P)
             try:
                 X = self[i].multiply(csr_matrix((
-                        np.random.random_sample(self[i].data.shape)<p,
+                        np.random.random_sample(self[i].data.shape) < p,
                         self[i].indices, self[i].indptr),
                         shape=P.shape))
                 P = P + P * X
