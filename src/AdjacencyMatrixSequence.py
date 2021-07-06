@@ -867,6 +867,67 @@ class AdjMatrixSequence(list):
         """Return matrix with only np.int64: ones."""
         M.data = np.ones_like(M.data)
 
+    def si_model(self, p=0.1, verbose=True, return_accessibility_matrix=False):
+        """
+        Compute an SI-model (susceptible, infected) on the network.
+
+        This is statistically equivalent to dilute the network first,
+        and then unfold the accessibility matrix.
+
+        Parameters
+        ----------
+        p : float, optional
+            Infection probability per temporal edge. Default is 0.1.
+
+        verbose : Boolean, optional
+            For text output. The default is True.
+
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+
+        Returns
+        -------
+        list
+            Cumulative path density vs. time.
+
+        """
+        assert p <= 1.0, "Probability must be <= 1."
+        assert p >= 0.0, "Probability must be >= 0."
+        verboseprint = print if verbose else lambda *a, **k: None
+
+        P = self[0].copy()
+        P.multiply(csr_matrix((
+            np.random.random_sample(P.data.shape)<p, P.indices, P.indptr),
+            shape=P.shape))
+
+        D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        P = P + D
+        cumu = [P.nnz]
+
+        for i in range(1, len(self)):
+            verboseprint(i, end=" ")
+            self.bool_int_matrix(P)
+            try:
+                X = self[i].multiply(csr_matrix((
+                        np.random.random_sample(self[i].data.shape)<p,
+                        self[i].indices, self[i].indptr),
+                        shape=P.shape))
+                P = P + P * X
+            except (KeyboardInterrupt, SystemExit, MemoryError):
+                print('\nBreak at t = ', i)
+                break
+            cumu.append(P.nnz)
+        else:
+            print('\n---> Unfolding complete.')
+
+        if return_accessibility_matrix:
+            P = P.astype('bool')
+            P = P.astype('int')
+            return P, cumu
+        else:
+            return cumu
+
     def unfold_accessibility(self, verbose=True,
                              return_accessibility_matrix=False):
         """

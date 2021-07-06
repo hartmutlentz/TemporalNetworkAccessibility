@@ -9,10 +9,13 @@ from TemporalNetworkEdgeList import TemporalEdgeList
 import Tools
 
 # import an edgelist as sequence of adjacency matrices
-the_file = 'edgelists/Test.dat'
-#the_file = "edgelists/sexual_contacts.dat"
+#the_file = 'edgelists/Test.dat'
+the_file = "edgelists/sexual_contacts.dat"
 #the_file = "edgelists/livestock_trade.csv"
 At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
+c = At.si_model(p=2.1)
+for i in c:
+    print(i)
 
 # compute accessibility
 #c = At.unfold_accessibility(return_accessibility_matrix=False)
@@ -25,9 +28,9 @@ At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
 #Tools.dict2file(h, "shortest_path_durations_histogram.txt")
 
 # tracing
-f = At.trace_forward_multiple_sources([3, 1])
-f = At.unfold_accessibility_multi_nodes([3, 1])
-print(f)
+#f = At.trace_forward_multiple_sources([3, 1])
+#f = At.unfold_accessibility_multi_nodes([3, 1])
+#print(f)
 
 
 # Causal fidelity
