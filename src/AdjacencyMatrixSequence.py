@@ -1,6 +1,6 @@
 #! /usr/bin/python
 """
-Provides Class AdjMatrixSequence temporal network analysis.
+Provides Class AdjMatrixSequence for temporal network analysis.
 
 Networks are represented as a sequence of adjacency matrices and each matrix
 is a snapshot of the network.
