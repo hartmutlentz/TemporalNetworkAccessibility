@@ -117,7 +117,7 @@ class AdjMatrixSequence(list):
         else:
             print("Number of nonzero elements is restricted to 2^31.")
 
-    def groupByTime(self, edges):
+    def groupbytime(self, edges):
         """Return list of tupels: [(d,[(u,v),...]),...]."""
         dct = defaultdict(list)
         for u, v, d in edges:
@@ -145,6 +145,8 @@ class AdjMatrixSequence(list):
         p_corr = {}
         if not max_window:
             mw = len(self)
+        else:
+            mw = max_window
 
         for twindow in range(mw):
             print("All time windows:", twindow)
@@ -313,7 +315,7 @@ class AdjMatrixSequence(list):
 
         Returns
         -------
-        list
+        set
             Node labels of the nodes in the LSCC.
         """
         n, labs = sp.csgraph.connected_components(A, connection="strong")
@@ -344,7 +346,7 @@ class AdjMatrixSequence(list):
         lscc_sample_node = next(iter(lscc_nodes))
         lscc_range = len(sp.csgraph.depth_first_order(A,
                          lscc_sample_node, return_predecessors=False))
-        for i in lscc_nodes:
+        for _ in lscc_nodes:
             paths += lscc_range
 
         # Remaining nodes
@@ -585,7 +587,7 @@ class AdjMatrixSequence(list):
             changed.
 
         """
-        assert p <= 1.0 and p >= 0.0, "p is a probability and must be\
+        assert 0.0 <= p <= 1.0, "p is a probability and must be\
             0 <= p <= 1."
 
         indices = np.column_stack(A.nonzero())
@@ -707,7 +709,7 @@ class AdjMatrixSequence(list):
         """Read file and returns vector from matrix."""
         C = mmread(in_file)
         C = lil_matrix(C)
-        x = [0.0 for i in range(C.shape[0])]
+        x = [0.0 for _ in range(C.shape[0])]
 
         indices = zip(C.nonzero()[0], C.nonzero()[1])
         for i, j in indices:
@@ -736,7 +738,7 @@ class AdjMatrixSequence(list):
         pool = tuple(iterable)
         n = len(pool)
         if with_replacement:
-            indices = sorted(random.randrange(n) for i in range(r))
+            indices = sorted(random.randrange(n) for _ in range(r))
         else:
             indices = sorted(random.sample(range(n), r))
         return tuple(pool[i] for i in indices)
@@ -850,14 +852,14 @@ class AdjMatrixSequence(list):
         # reindex using this dictionary
         edges = [(re_dct[u], re_dct[v], d) for u, v, d in edges]
 
-        edges = self.groupByTime(edges)
+        edges = self.groupbytime(edges)
 
         # the actual construction of the sparse matrices
         mx_index = len(re_dct)
         for d, es in edges:
             us = [u for u, v in es]
             vs = [v for u, v in es]
-            bs = [True for i in range(len(es))]
+            bs = [True for _ in range(len(es))]
 
             m = csr_matrix((bs, (us, vs)), shape=(mx_index, mx_index),
                            dtype=np.int32)
@@ -1014,7 +1016,7 @@ class AdjMatrixSequence(list):
             ranges[node] = single_node_SI[-1]
 
         if return_ranges:
-            return (all_paths, ranges)
+            return all_paths, ranges
         else:
             return all_paths
 
@@ -1185,6 +1187,8 @@ class AdjMatrixSequence(list):
         """
         if not stop:
             maxtime = len(self)
+        else:
+            maxtime = stop
 
         # init
         row = np.zeros(len(start))
@@ -1236,7 +1240,7 @@ if __name__ == "__main__":
     # x = At.all_time_windows()
     x = At.deep_product()
     x = At.long_paths_per_snapshot(3)
-    x = At.long_path_correction(3)
+    At.long_path_correction(3)
     x = At.LCCs()
     x = At.static_path_density()
     x = At.step_by_step_static_path_density()
@@ -1249,7 +1253,7 @@ if __name__ == "__main__":
     x = At.GST()
     x = At.time_reversed(True)
     x = At.transpose()
-    x = At.as_undirected()
+    At.as_undirected()
     x = At.clustering_matrix(replacement=True)
     x = At.unfold_accessibility_memory_efficient()
     x = At.unfold_accessibility_single_node(0)
