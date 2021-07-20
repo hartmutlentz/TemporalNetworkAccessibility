@@ -55,7 +55,8 @@ class AdjMatrixSequence(list):
         self.number_of_nodes = np.shape(self[0])[0]
         self.check_py_version()
 
-    def check_py_version(self):
+    @staticmethod
+    def check_py_version():
         """Check version."""
         assert sys.version_info > (3,), ("You are using python 2. Please use "
                                          "python 3.\nPython 3.6 or greater is "
@@ -86,7 +87,8 @@ class AdjMatrixSequence(list):
 
         return a + b + c + d
 
-    def __scipy_version_for_large_matrices(self, ref="0.14.0"):
+    @staticmethod
+    def __scipy_version_for_large_matrices(ref="0.14.0"):
         """
         Check if the installed version of Scipy is at least ref.
 
@@ -194,8 +196,7 @@ class AdjMatrixSequence(list):
     def deep_product(self, twindow=1, start=0):
         """Product A_1*A_7*A_14... ."""
         C = self[start].copy()
-        links = {}
-        links[start] = (C * C).sum()
+        links = {start: (C * C).sum()}
 
         for i in range(start+twindow, len(self)-twindow, twindow):
             C = C * self[i]
@@ -222,7 +223,8 @@ class AdjMatrixSequence(list):
         else:
             return lcc_size / float(self.number_of_nodes)
 
-    def average_path_length(self, M, diameter):
+    @staticmethod
+    def average_path_length(M, diameter):
         """
         Return average pathlength of a snapshot.
 
@@ -302,7 +304,8 @@ class AdjMatrixSequence(list):
 #            paths += out_size
 #
 #        return float(paths) / n**2
-    def LSCC_nodes(self, A):
+    @staticmethod
+    def LSCC_nodes(A):
         """
         Return nodes of the largest stringly connected component.
 
@@ -565,7 +568,8 @@ class AdjMatrixSequence(list):
             self.extend(self[:new_start_time])
             del self[:new_start_time]
 
-    def random_submatrix(self, A, p=0.5):
+    @staticmethod
+    def random_submatrix(A, p=0.5):
         """
         Return a random subset of a sparse matrix.
 
@@ -689,7 +693,8 @@ class AdjMatrixSequence(list):
         else:
             return x
 
-    def symmetrize_matrix(self, A):
+    @staticmethod
+    def symmetrize_matrix(A):
         """Return symmetric version of a non-symm Matrix A as bool-int."""
         M = A + A.transpose()
         M = M.astype('bool')
@@ -705,7 +710,8 @@ class AdjMatrixSequence(list):
         # else:
         #    raise NotImplementedError, "Network is already undirected."
 
-    def clustering_matrix2vector(self, in_file):
+    @staticmethod
+    def clustering_matrix2vector(in_file):
         """Read file and returns vector from matrix."""
         C = mmread(in_file)
         C = lil_matrix(C)
@@ -717,7 +723,8 @@ class AdjMatrixSequence(list):
 
         return x
 
-    def __random_combination(self, iterable, r, with_replacement=False):
+    @staticmethod
+    def __random_combination(iterable, r, with_replacement=False):
         """
         Random selection.
 
@@ -865,7 +872,8 @@ class AdjMatrixSequence(list):
                            dtype=np.int32)
             self.append(m)
 
-    def bool_int_matrix(self, M):
+    @staticmethod
+    def bool_int_matrix(M):
         """Return matrix with only np.int64: ones."""
         M.data = np.ones_like(M.data)
 
