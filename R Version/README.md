@@ -11,7 +11,7 @@ TemporalNetworkAccessibility
 
 This software is an *R code* for the analysis of temporal networks.
 
-It provides code used for computing the results of the Papers
+It provides code for computing the results of the Papers
 
 **Unfolding Accessibility Provides a Macroscopic Approach to Temporal Networks**,  
 Lentz et al., Phys. Rev. Lett. 110, 118701 (2013)
