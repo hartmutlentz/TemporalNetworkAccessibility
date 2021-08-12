@@ -21,10 +21,10 @@ and
 **Disease Spread through Animal Movements: A Static and Temporal Network Analysis of Pig Trade in Germany**,
 Lentz et al., PLOS ONE 11, e0155196–32 (2016)
 
-Please cite the second reference (PLOS ONE), if you use the R code.
+Please cite the second reference (PLOS ONE) if you use the R code.
 
 
-The current version is limited to the calculation of the for the software is a cumulative and shortest paths in a temporal network. It consists in 4 functions
+The current version is limited to the calculation of the cumulative path duration distribution and shortest path duration distrubution in a temporal network. It consists of 4 functions:
 
 - ```prepare_data()```: A function to prepare he data in order to set up the Sparse matices
 - ```create_temporal_network()```: A function to set up a list with Sparse matrices
@@ -58,7 +58,7 @@ library(ggplot2)
 
 Download the file *Unfold_accessibility.R* from github
 
-In your script use the functions by adding
+In your script, use the functions by adding
 
 ``` r
 source("Unfold_accessibility.R")
@@ -97,13 +97,13 @@ Create a list of sparse matrices (One matrix per time step)
 the_file <- create_temporal_network(prep_df)
 ```
 
-## Calculate the cumulative and shortest paths 
+## Calculate cumulative paths and shortest paths durations
 
 ``` r
 cp <- cumul_path(the_file)
 ``` 
 
-# Plot the cumulative and shortest paths 
+# Plot cumulative paths and shortest paths durations 
 
 ``` r
 plot_tn(cp)
