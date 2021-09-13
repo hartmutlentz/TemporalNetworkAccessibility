@@ -21,6 +21,7 @@ import random
 import copy
 import itertools
 import sys
+from collections import deque
 
 
 class AdjMatrixSequence(list):
