@@ -45,3 +45,6 @@ uuunfold_Accessibility.py
 
 src/oldindex_matrixfriendly.txt
 .ipynb_checkpoints/Tutorial-checkpoint.ipynb
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml

@@ -1,6 +1,7 @@
 #! /usr/bin/python
 """
-Provides Class AdjMatrixSequence temporal network analysis.
+
+Provides Class AdjMatrixSequence for temporal network analysis.
 
 Networks are represented as a sequence of adjacency matrices and each matrix
 is a snapshot of the network.
@@ -56,7 +57,8 @@ class AdjMatrixSequence(list):
         self.number_of_nodes = np.shape(self[0])[0]
         self.check_py_version()
 
-    def check_py_version(self):
+    @staticmethod
+    def check_py_version():
         """Check version."""
         assert sys.version_info > (3,), ("You are using python 2. Please use "
                                          "python 3.\nPython 3.6 or greater is "
@@ -87,7 +89,8 @@ class AdjMatrixSequence(list):
 
         return a + b + c + d
 
-    def __scipy_version_for_large_matrices(self, ref="0.14.0"):
+    @staticmethod
+    def __scipy_version_for_large_matrices(ref="0.14.0"):
         """
         Check if the installed version of Scipy is at least ref.
 
@@ -118,7 +121,7 @@ class AdjMatrixSequence(list):
         else:
             print("Number of nonzero elements is restricted to 2^31.")
 
-    def groupByTime(self, edges):
+    def groupbytime(self, edges):
         """Return list of tupels: [(d,[(u,v),...]),...]."""
         dct = defaultdict(list)
         for u, v, d in edges:
@@ -146,6 +149,8 @@ class AdjMatrixSequence(list):
         p_corr = {}
         if not max_window:
             mw = len(self)
+        else:
+            mw = max_window
 
         for twindow in range(mw):
             print("All time windows:", twindow)
@@ -193,8 +198,7 @@ class AdjMatrixSequence(list):
     def deep_product(self, twindow=1, start=0):
         """Product A_1*A_7*A_14... ."""
         C = self[start].copy()
-        links = {}
-        links[start] = (C * C).sum()
+        links = {start: (C * C).sum()}
 
         for i in range(start+twindow, len(self)-twindow, twindow):
             C = C * self[i]
@@ -221,7 +225,8 @@ class AdjMatrixSequence(list):
         else:
             return lcc_size / float(self.number_of_nodes)
 
-    def average_path_length(self, M, diameter):
+    @staticmethod
+    def average_path_length(M, diameter):
         """
         Return average pathlength of a snapshot.
 
@@ -301,7 +306,8 @@ class AdjMatrixSequence(list):
 #            paths += out_size
 #
 #        return float(paths) / n**2
-    def LSCC_nodes(self, A):
+    @staticmethod
+    def LSCC_nodes(A):
         """
         Return nodes of the largest stringly connected component.
 
@@ -314,7 +320,7 @@ class AdjMatrixSequence(list):
 
         Returns
         -------
-        list
+        set
             Node labels of the nodes in the LSCC.
         """
         n, labs = sp.csgraph.connected_components(A, connection="strong")
@@ -345,7 +351,7 @@ class AdjMatrixSequence(list):
         lscc_sample_node = next(iter(lscc_nodes))
         lscc_range = len(sp.csgraph.depth_first_order(A,
                          lscc_sample_node, return_predecessors=False))
-        for i in lscc_nodes:
+        for _ in lscc_nodes:
             paths += lscc_range
 
         # Remaining nodes
@@ -564,7 +570,8 @@ class AdjMatrixSequence(list):
             self.extend(self[:new_start_time])
             del self[:new_start_time]
 
-    def random_submatrix(self, A, p=0.5):
+    @staticmethod
+    def random_submatrix(A, p=0.5):
         """
         Return a random subset of a sparse matrix.
 
@@ -586,7 +593,7 @@ class AdjMatrixSequence(list):
             changed.
 
         """
-        assert p <= 1.0 and p >= 0.0, "p is a probability and must be\
+        assert 0.0 <= p <= 1.0, "p is a probability and must be\
             0 <= p <= 1."
 
         indices = np.column_stack(A.nonzero())
@@ -688,7 +695,8 @@ class AdjMatrixSequence(list):
         else:
             return x
 
-    def symmetrize_matrix(self, A):
+    @staticmethod
+    def symmetrize_matrix(A):
         """Return symmetric version of a non-symm Matrix A as bool-int."""
         M = A + A.transpose()
         M = M.astype('bool')
@@ -704,11 +712,12 @@ class AdjMatrixSequence(list):
         # else:
         #    raise NotImplementedError, "Network is already undirected."
 
-    def clustering_matrix2vector(self, in_file):
+    @staticmethod
+    def clustering_matrix2vector(in_file):
         """Read file and returns vector from matrix."""
         C = mmread(in_file)
         C = lil_matrix(C)
-        x = [0.0 for i in range(C.shape[0])]
+        x = [0.0 for _ in range(C.shape[0])]
 
         indices = zip(C.nonzero()[0], C.nonzero()[1])
         for i, j in indices:
@@ -716,7 +725,8 @@ class AdjMatrixSequence(list):
 
         return x
 
-    def __random_combination(self, iterable, r, with_replacement=False):
+    @staticmethod
+    def __random_combination(iterable, r, with_replacement=False):
         """
         Random selection.
 
@@ -737,7 +747,7 @@ class AdjMatrixSequence(list):
         pool = tuple(iterable)
         n = len(pool)
         if with_replacement:
-            indices = sorted(random.randrange(n) for i in range(r))
+            indices = sorted(random.randrange(n) for _ in range(r))
         else:
             indices = sorted(random.sample(range(n), r))
         return tuple(pool[i] for i in indices)
@@ -851,22 +861,84 @@ class AdjMatrixSequence(list):
         # reindex using this dictionary
         edges = [(re_dct[u], re_dct[v], d) for u, v, d in edges]
 
-        edges = self.groupByTime(edges)
+        edges = self.groupbytime(edges)
 
         # the actual construction of the sparse matrices
         mx_index = len(re_dct)
         for d, es in edges:
             us = [u for u, v in es]
             vs = [v for u, v in es]
-            bs = [True for i in range(len(es))]
+            bs = [True for _ in range(len(es))]
 
             m = csr_matrix((bs, (us, vs)), shape=(mx_index, mx_index),
                            dtype=np.int32)
             self.append(m)
 
-    def bool_int_matrix(self, M):
+    @staticmethod
+    def bool_int_matrix(M):
         """Return matrix with only np.int64: ones."""
         M.data = np.ones_like(M.data)
+
+    def si_model(self, p=0.1, verbose=True, return_accessibility_matrix=False):
+        """
+        Compute an SI-model (susceptible, infected) on the network.
+
+        This is statistically equivalent to dilute the network first,
+        and then unfold the accessibility matrix.
+
+        Parameters
+        ----------
+        p : float, optional
+            Infection probability per temporal edge. Default is 0.1.
+
+        verbose : Boolean, optional
+            For text output. The default is True.
+
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+
+        Returns
+        -------
+        list
+            Cumulative path density vs. time.
+
+        """
+        assert p <= 1.0, "Probability must be <= 1."
+        assert p >= 0.0, "Probability must be >= 0."
+        verboseprint = print if verbose else lambda *a, **k: None
+
+        P = self[0].copy()
+        P.multiply(csr_matrix((
+            np.random.random_sample(P.data.shape) < p, P.indices, P.indptr),
+            shape=P.shape))
+
+        D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        P = P + D
+        cumu = [P.nnz]
+
+        for i in range(1, len(self)):
+            verboseprint(i, end=" ")
+            self.bool_int_matrix(P)
+            try:
+                X = self[i].multiply(csr_matrix((
+                        np.random.random_sample(self[i].data.shape) < p,
+                        self[i].indices, self[i].indptr),
+                        shape=P.shape))
+                P = P + P * X
+            except (KeyboardInterrupt, SystemExit, MemoryError):
+                print('\nBreak at t = ', i)
+                break
+            cumu.append(P.nnz)
+        else:
+            print('\n---> Unfolding complete.')
+
+        if return_accessibility_matrix:
+            P = P.astype('bool')
+            P = P.astype('int')
+            return P, cumu
+        else:
+            return cumu
 
     def unfold_accessibility(self, verbose=True,
                              return_accessibility_matrix=False):
@@ -954,7 +1026,7 @@ class AdjMatrixSequence(list):
             ranges[node] = single_node_SI[-1]
 
         if return_ranges:
-            return (all_paths, ranges)
+            return all_paths, ranges
         else:
             return all_paths
 
@@ -1345,6 +1417,8 @@ class AdjMatrixSequence(list):
         """
         if not stop:
             maxtime = len(self)
+        else:
+            maxtime = stop
 
         # init
         row = np.zeros(len(start))
@@ -1396,7 +1470,7 @@ if __name__ == "__main__":
     # x = At.all_time_windows()
     x = At.deep_product()
     x = At.long_paths_per_snapshot(3)
-    x = At.long_path_correction(3)
+    At.long_path_correction(3)
     x = At.LCCs()
     x = At.static_path_density()
     x = At.step_by_step_static_path_density()
@@ -1409,7 +1483,7 @@ if __name__ == "__main__":
     x = At.GST()
     x = At.time_reversed(True)
     x = At.transpose()
-    x = At.as_undirected()
+    At.as_undirected()
     x = At.clustering_matrix(replacement=True)
     x = At.unfold_accessibility_memory_efficient()
     x = At.unfold_accessibility_single_node(0)

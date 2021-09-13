@@ -1,5 +1,11 @@
 #! /usr/bin/python
-#
+"""
+Provides Class TemporalNetwork Edgelist for temporal network analysis.
+
+Author: Hartmut H. K. Lentz
+https://github.com/hartmutlentz/TemporalNetworkAccessibility
+"""
+
 
 import random
 import numpy as np
@@ -11,9 +17,13 @@ except ImportError:
 
 
 class TemporalEdgeList():
-    """ Class for temporal edgelists as triples (u,v,d),
-        Where (u,v) is an edge at time d.
     """
+    Class for temporal edgelists as triples (u,v,d).
+
+    (u,v) is an edge at time d.
+
+    """
+
     def __init__(self, fname, directed, timecolumn=2):
         self.edges = np.loadtxt(fname, usecols=(0, 1, timecolumn), dtype='int')
         self.__clean_edges()
@@ -77,8 +87,10 @@ class TemporalEdgeList():
         self.edges = list(cut)
 
     def dilute(self, p=0.5):
-        """ Keep each edge in each snapshot with probability p,
-            i.e. remove each such edge with probability 1-p.
+        """
+        Keep each edge in each snapshot with probability p.
+
+        I.e. remove each such edge with probability 1-p.
 
         """
         assert p > 0.0, "Probability must be greater than zero."
@@ -94,10 +106,21 @@ class TemporalEdgeList():
                     t[d].append((i, j))
 
         self.snapshots = t
-        self.__update_edges
+        self.__update_edges()
         self.static_edges = self.__get_static_edges()
 
     def edge_occurrence_times(self):
+        """
+        Return a dictionary with edge occurence times.
+
+        Keys are the edges and values are their occurence times.
+
+        Returns
+        -------
+        et : dict
+            edge occurence times.
+
+        """
         # dict {(u,v):[t1,t2,...],...}
         et = dict([(se, []) for se in self.static_edges])
 
@@ -111,6 +134,15 @@ class TemporalEdgeList():
         return et
 
     def node_occurrence_times(self):
+        """
+        Return a dictionary of node activity times.
+
+        Returns
+        -------
+        et : dict
+            node activity times.
+
+        """
         # dict {v:[t1, t2, ...]}
         et = dict([(se, []) for se in self.nodes()])
 
@@ -125,11 +157,26 @@ class TemporalEdgeList():
         return et
 
     def GST(self):
+        """
+        Alias.
+
+        Returns
+        -------
+        None.
+
+        """
         # alias
         self.shuffle_snapshot_times()
 
     def shuffle_snapshot_times(self):
-        # shuffles all snapshots
+        """
+        Shuffle all snapshots.
+
+        Returns
+        -------
+        None.
+
+        """
         new_keys = list((self.snapshots).keys())
         random.shuffle(new_keys)
 
@@ -146,12 +193,21 @@ class TemporalEdgeList():
         self.snapshots = self.__update_snapshots()
 
     def LST(self):
-        # alias
+        """
+        Alias.
+
+        Returns
+        -------
+        None.
+
+        """
         self.shuffle_edge_times()
 
     def shuffle_edge_times(self):
-        """ gives every edge new occurrence times at random.
-            Number of occurrences is conserved.
+        """
+        Give every edge new occurrence times at random.
+
+        Number of occurrences is conserved.
         """
         edge_occs = self.edge_occurrence_times()
         new_edge_occs = dict([(se, []) for se in edge_occs])
@@ -170,10 +226,28 @@ class TemporalEdgeList():
         self.snapshots = self.__update_snapshots()
 
     def TR(self):
+        """
+        Alias.
+
+        Returns
+        -------
+        None.
+
+        """
         # time reversal alias
         self.time_reversal()
 
     def time_reversal(self):
+        """
+        Revert all time stamps.
+
+        All edges are reversed as well.
+
+        Returns
+        -------
+        None.
+
+        """
         # revert time stamps
         new_keys = list(range(self.mintime, self.maxtime+1))
 
@@ -205,9 +279,11 @@ class TemporalEdgeList():
         self.snapshots[time] = new_edges
 
     def __graphlet_configuration_model(self, G_in):
-        """ Converts network input network into graph sequence and
-            generates new configuration graph.
-            Number of edges is not conserved!
+        """
+        Convert network input network into graph sequence.
+
+        Hereby generate new configuration graph.
+        Number of edges is not conserved!
         """
         if G_in.is_directed():
             # inseq = list(G_in.in_degree().values())
@@ -229,7 +305,7 @@ class TemporalEdgeList():
         return H.edges()
 
     def __graphlet_to_nx_graph(self, time):
-        """ Converts a snapshot to nx.(Di)Graph """
+        """Convert a snapshot to nx.(Di)Graph."""
         if self.is_directed:
             G = nx.DiGraph()
         else:
@@ -240,8 +316,9 @@ class TemporalEdgeList():
 
     def __randomize_graphlet(self, time, maxiterations=100):
         """
-            Returns a randomized version of a graph or digraph.
-            The degree sequence is conserved.
+        Return a randomized version of a graph or digraph.
+
+        The degree sequence is conserved.
         """
         iterations = len(self.snapshots[time]) * maxiterations
 
@@ -252,7 +329,7 @@ class TemporalEdgeList():
                 if fi[0] == fi[1] or se[0] == se[1]\
                     or fi[0] == se[0] or fi[0] == se[1]\
                         or fi[1] == se[0] or fi[1] == se[1]:
-                            return False
+                    return False
                 else:
                     return True
 
@@ -268,7 +345,7 @@ class TemporalEdgeList():
                 second = random.sample(ed, 1)[0]  # random.choice(ed)
                 if are_disjoint(first, second) and \
                         pair_not_in_G(first, second, ed):
-                        return (first, second)
+                    return (first, second)
             return False
 
         def legal_graph_condition(e):
@@ -302,13 +379,15 @@ class TemporalEdgeList():
         self.snapshots[time] = list(edges)
 
     def configuration_model(self):
-        # alias
+        """Alias."""
         self.CM()
 
     def CM(self):
-        """ Configuration model.
-            Faster than RE, but number of edges is not conserved.
-            Use RE for smaller networks only.
+        """
+        Compute Configuration model.
+
+        Faster than RE, but number of edges is not conserved.
+        Use RE for smaller networks only.
         """
         for i, t in enumerate(self.snapshots):
             print("Configuration model for t= ", i, " of ", self.timespan)
@@ -320,12 +399,11 @@ class TemporalEdgeList():
         self.static_edges = self.__get_static_edges()
 
     def RE(self, maxiterations=100):
-        # alias
+        """Alias."""
         self.randomize_edges(maxiterations)
 
     def randomize_edges(self, maxiterations=100):
-        """ Edge randomization for each graphlet
-        """
+        """Edge randomization for each graphlet."""
         for i, j in enumerate(self.snapshots):  # range(self.maxtime):
             print("Randomizing ", i, " of ", self.timespan)
             self.__randomize_graphlet(j, maxiterations)
@@ -333,10 +411,11 @@ class TemporalEdgeList():
         self.static_edges = self.__get_static_edges()
 
     def number_of_nodes(self):
+        """Return number of nodes."""
         return len(self.nodes())
 
     def nodes(self):
-        # the nodes of the network as set.
+        """Return the nodes of the network as set."""
         nodes = []
         for (u, v) in self.static_edges:
             nodes.append(u)
@@ -345,8 +424,7 @@ class TemporalEdgeList():
         return nodes
 
     def write(self, fname):
-        """ writes self to txtfile.
-        """
+        """Write self to txtfile."""
         arr = self.edges
         g = open(fname, 'w+')
         for i in range(len(arr)):
@@ -359,7 +437,7 @@ class TemporalEdgeList():
         return
 
     def average_size(self):
-        """ average edge density """
+        """Average edge density."""
         all_edges = 0
         for time in self.snapshots:
             all_edges += len(self.snapshots[time])
@@ -367,8 +445,10 @@ class TemporalEdgeList():
         return float(all_edges) / (self.maxtime - self.mintime)
 
     def random_times_uniform(self):
-        """ Times at random from uniform distribution
-            SLOW!
+        """
+        Return edges at random times from uniform distribution.
+
+        SLOW!
         """
         prob = self.average_size() / len(self.static_edges)
         # print(prob)
@@ -382,16 +462,21 @@ class TemporalEdgeList():
         self.__update_edges()
 
     def RT(self):
-        # alias
+        """Alias."""
         self.random_times()
 
     def random_times(self):
-        """ Keeps the distribution of graph sizes.
-            Example:
-            before: time_1: 2 edges, time_2: 5 edges, time_3: 4 edges
-            edges are elements of static edges (fixed):
-            after: time_1: 5 edges, time_2: 4 edges, time_3: 2 edges
-            edges are chosen randomly from static graph
+        """
+        Choose edges from the static graph at random times.
+
+        Keeps the distribution of graph sizes.
+
+        Example
+        -------
+        before: time_1: 2 edges, time_2: 5 edges, time_3: 4 edges
+        edges are elements of static edges (fixed):
+        after: time_1: 5 edges, time_2: 4 edges, time_3: 2 edges
+        edges are chosen randomly from static graph.
         """
         sizes = dict([(i, len(self.snapshots[i])) for i in self.snapshots])
         # new permutation of edge densities
@@ -417,7 +502,6 @@ class TemporalEdgeList():
 
 
 if __name__ == "__main__":
-    from pprint import pprint
     the_file = '../edgelists/Test.dat'
 
     print("===== Testing Module TemporalEdgeList =====\n")
@@ -428,18 +512,18 @@ if __name__ == "__main__":
     print(E.snapshots[0])
 
     E = TemporalEdgeList(the_file, directed=True)
-    #x = E.edge_occurrence_times()
-    #x = E.node_occurrence_times()
+    # x = E.edge_occurrence_times()
+    # x = E.node_occurrence_times()
     E.GST()
     E.LST()
     E.TR()
     # E.CM()
     E.RE()
-    #E.randomize_edges()
+    # E.randomize_edges()
     x = E.number_of_nodes()
     x = E.average_size()
     E.random_times_uniform()
-    #E.write('temp.txt')
+    # E.write('temp.txt')
     E.RT()
 
     print(x)

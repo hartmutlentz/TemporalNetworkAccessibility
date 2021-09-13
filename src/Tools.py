@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Tools for data handling."""
 #
 #
 #
@@ -7,7 +8,7 @@
 
 
 def cdf2histogram(c_in):
-    """ Reads cdf as list and returns histogram. """
+    """Read cdf as list and returns histogram."""
     h = []
     h.append(c_in[0])
     for i in range(1, len(c_in)):
@@ -16,8 +17,10 @@ def cdf2histogram(c_in):
 
 
 def dict2file(d, nameoffile='dict.txt', sorted=True):
-    """ Writes dictionary (or list or tuple) to a textfile
-        Sorted by keys, if sorted=True.
+    """
+    Write dictionary (or list or tuple) to a textfile.
+
+    Sorted by keys, if sorted=True.
     """
     def list2dict(li):
         x = {}
@@ -36,13 +39,14 @@ def dict2file(d, nameoffile='dict.txt', sorted=True):
     s = list(d.values())[0]
     if isinstance(s, dict) or isinstance(s, list) or isinstance(s, tuple):
         laenge = len(d.values()[0])
-        g = file(nameoffile, 'w+')
-        for k in dk:
-            wstring = ''
-            for l in range(laenge):
-                wstring += '\t' + str(d[k][l])
-            g.writelines((str(k) + wstring + '\n'))
-        g.close
+        with open(nameoffile, "w+") as g:
+            # g = file(nameoffile, 'w+')
+            for k in dk:
+                wstring = ''
+                for i in range(laenge):
+                    wstring += '\t' + str(d[k][i])
+                g.writelines((str(k) + wstring + '\n'))
+            g.close
         return
 
     g = open(nameoffile, 'w+')
