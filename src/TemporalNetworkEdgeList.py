@@ -106,7 +106,7 @@ class TemporalEdgeList():
                     t[d].append((i, j))
 
         self.snapshots = t
-        self.__update_edges
+        self.__update_edges()
         self.static_edges = self.__get_static_edges()
 
     def edge_occurrence_times(self):
