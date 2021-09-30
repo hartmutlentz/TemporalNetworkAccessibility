@@ -1,5 +1,6 @@
 #! /usr/bin/python
 """
+
 Provides Class AdjMatrixSequence for temporal network analysis.
 
 Networks are represented as a sequence of adjacency matrices and each matrix
@@ -21,6 +22,7 @@ import random
 import copy
 import itertools
 import sys
+from collections import deque
 
 
 class AdjMatrixSequence(list):
@@ -1153,6 +1155,226 @@ class AdjMatrixSequence(list):
                                       new_infected})
 
         return arrival_times
+
+    def unfold_accessibility_sir_constant_recovery(self, p_si=0.5, recovery=10, return_accessibility_matrix = False):
+
+        """
+        Compute path density for all nodes. Infected nodes will recover after a given timespan.
+        Recovered nodes can not be infected again.
+        Parameters
+        ----------
+        p_si : float, optional
+            probability of becoming infected from contact with an infected node. Default is 0.5.
+        recovery : int
+            Time after which an infected node recovers and cannot be infected again.
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+        Returns
+        -------
+        cumu : list
+        a list containing the number of infected nodes for every timestep.
+        cumu_rec : list
+        a list containing the number of removed nodes for every timestep.
+        
+        """
+
+        P = self[0].copy()
+        D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        # the si part
+        P = D + D * csr_matrix((np.random.random_sample(self[0].data.shape)<p_si, self[0].indices, self[0].indptr), shape=self[0].shape)
+        # the ir part
+        empty = csr_matrix((self.number_of_nodes, self.number_of_nodes), dtype=np.int32)
+        history = deque([empty for i in range(recovery)], maxlen=recovery)
+        history.append(P)
+        R = empty
+        # save state
+        cumu = [P.nnz]
+        cumu_rec = [0]
+
+        for t in range(1, len(self)): 
+            # the si part
+            P = P + P * csr_matrix((np.random.random_sample(self[t].data.shape)<p_si, self[t].indices, self[t].indptr), shape=self[t].shape)
+            # the ir part
+            R += history[0]
+            P -= P.multiply(R.astype("bool"))
+            history.append(P)
+            # save state
+            cumu.append(P.nnz)
+            cumu_rec.append(R.nnz)
+
+
+        if return_accessibility_matrix:
+            P += R
+            self.bool_int_matrix(P)
+            P = P.astype('bool')
+            P = P.astype('int')
+            return P, cumu, cumu_rec
+        else:
+            return cumu, cumu_rec
+
+    def unfold_accessibility_sir_random_recovery(self, p_si=0.5, p_ir=0.01, return_accessibility_matrix = False):
+
+        """
+        Compute path density for all nodes. Infected nodes will recover spontaneously with a given probability.
+        Recovered nodes can not be infected again.
+        Parameters
+        ----------
+        p_si : float, optional
+            probability of becoming infected from contact with an infected node. Default is 0.5.
+        p_ir : float
+            Probability that a node recovers spontaneously. Should be between 0 and 1. Default is 0.01.
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+        Returns
+        -------
+        cumu : list
+        a list containing the number of infected nodes for every timestep.
+        cumu_rec : list
+        a list containing the number of removed nodes for every timestep.
+        
+        """
+
+        P = self[0].copy()
+        D = sp.identity(self.number_of_nodes, dtype=np.int32)
+        # the si part
+        P = D + D * csr_matrix((np.random.random_sample(self[0].data.shape)<p_si, self[0].indices, self[0].indptr), shape=self[0].shape)
+        #the ir part
+        R = P.multiply(csr_matrix((np.random.random_sample(P.data.shape)<p_ir, P.indices, P.indptr), shape=P.shape))
+        P -= P.multiply(R.astype("bool"))
+        # save state
+        cumu = [P.nnz]
+        cumu_rec = [R.nnz]
+
+        for t in range(1, len(self)):
+            # the si part
+            P = P + P * csr_matrix((np.random.random_sample(self[t].data.shape)<p_si, self[t].indices, self[t].indptr), shape=self[t].shape)
+            # the ir part
+            R += P.multiply(csr_matrix((np.random.random_sample(P.data.shape)<p_ir, P.indices, P.indptr), shape=P.shape))
+            P -= P.multiply(R.astype("bool"))
+            # save state
+            cumu.append(P.nnz)
+            cumu_rec.append(R.nnz)
+
+        if return_accessibility_matrix:
+            P += R
+            P = P.astype('bool')
+            P = P.astype('int')
+            return P, cumu, cumu_rec
+        else:
+            return cumu, cumu_rec
+
+    def unfold_accessibility_sir_constant_recovery_single_node(self, p_si=0.5, recovery=10, start_node = None, return_accessibility_matrix = False):
+        
+        """
+        Compute path density for a single node. Infected nodes will recover after a given timespan.
+        Recovered nodes can not be infected again.
+        Parameters
+        ----------
+        p_si : float, optional
+            probability of becoming infected from contact with an infected node. Default is 0.5.
+        recovery : int
+            Time after which an infected node recovers and cannot be infected again.
+        start_node : int, optional
+            First infected node. If None, a random node is chosen.
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+        Returns
+        -------
+        cumu : list
+        a list containing the number of infected nodes for every timestep.
+        cumu_rec : list
+        a list containing the number of removed nodes for every timestep.
+        
+        """
+
+        # set start_node for epidemic
+        if start_node or start_node == 0:
+            start = start_node
+        else:
+            start = np.random.randint(self.number_of_nodes)
+        print("Starting epidemic at node ", start)
+
+        x = sp.csr_matrix(([1], ([0], [start])), shape=(1, self.number_of_nodes), dtype=int)
+        # the si part
+        x = x + x * csr_matrix((np.random.random_sample(self[0].data.shape)<p_si, self[0].indices, self[0].indptr), shape=self[0].shape)
+        # the ir part
+        empty = csr_matrix((1, self.number_of_nodes), dtype=np.int32)
+        history = deque([empty.copy() for i in range(recovery)], maxlen=recovery)
+        R = empty.copy()
+        #save state
+        cumu = [x.nnz]
+        cumu_rec = [0]
+        
+        for t in range(1, len(self)): 
+            # the si part
+            x = x + x * csr_matrix((np.random.random_sample(self[t].data.shape)<p_si, self[t].indices, self[t].indptr), shape=self[t].shape)
+            # the ir part
+            R += history[0]
+            x -= x.multiply(R.astype("bool"))
+            history.append(x)
+            # save state
+            cumu.append(x.nnz)
+            cumu_rec.append(R.nnz)
+
+        return cumu, cumu_rec
+    
+    def unfold_accessibility_sir_random_recovery_single_node(self, p_si=0.5, p_ir=0.01, start_node = None, return_accessibility_matrix = False):
+        
+        """
+        Compute path density for a single node. Infected nodes will recover spontaneously with a given probability.
+        Recovered nodes can not be infected again.
+        Parameters
+        ----------
+        p_si : float, optional
+            probability of becoming infected from contact with an infected node. Default is 0.5.
+        p_ir : float
+            Probability that a node recovers spontaneously. Should be between 0 and 1. Default is 0.01.
+        start_node : int, optional
+            First infected node. If None, a random node is chosen.
+        return_accessibility_matrix : Boolean, optional
+            Returns the whole accessibility matrix. The matrix can be huge for
+            large networks. The default is False.
+        Returns
+        -------
+        cumu : list
+        a list containing the number of infected nodes for every timestep.
+        cumu_rec : list
+        a list containing the number of removed nodes for every timestep.
+        
+        """
+
+        # set start_node for epidemic
+        if start_node or start_node == 0:
+            start = start_node
+        else:
+            start = np.random.randint(self.number_of_nodes)
+        print("Starting epidemic at node ", start)
+
+        x = sp.csr_matrix(([1], ([0], [start])), shape=(1, self.number_of_nodes), dtype=int)
+        # the si part
+        x = x + x * csr_matrix((np.random.random_sample(self[0].data.shape)<p_si, self[0].indices, self[0].indptr), shape=self[0].shape)
+        # the ir part
+        R = x.multiply(csr_matrix((np.random.random_sample(x.data.shape)<p_ir, x.indices, x.indptr), shape=x.shape))
+        x -= x.multiply(R.astype("bool"))
+        # save state
+        cumu = [x.nnz]
+        cumu_rec = [R.nnz]
+
+        
+        for t in range(1, len(self)): 
+            # the si part
+            x = x + x * csr_matrix((np.random.random_sample(self[t].data.shape)<p_si, self[t].indices, self[t].indptr), shape=self[t].shape)
+            # the ir part
+            R += x.multiply(csr_matrix((np.random.random_sample(x.data.shape)<p_ir, x.indices, x.indptr), shape=x.shape))
+            x -= x.multiply(R.astype("bool"))
+            # save state
+            cumu.append(x.nnz)
+            cumu_rec.append(R.nnz)
+
+        return cumu, cumu_rec
 
     def trace_forward(self, start_node, start_time=0, stop=None):
         """
