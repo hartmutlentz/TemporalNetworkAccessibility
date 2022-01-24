@@ -2,12 +2,12 @@
 """Unfold Accessibility ecercises."""
 #
 import sys
+sys.path.append('./src')
+
 import numpy as np
 from AdjacencyMatrixSequence import AdjMatrixSequence
 from TemporalNetworkEdgeList import TemporalEdgeList
 import Tools
-
-sys.path.append('./src')
 
 # import an edgelist as sequence of adjacency matrices
 # the_file = 'edgelists/Test.dat'
@@ -25,7 +25,7 @@ for i in c:
 # h = np.gradient(c)
 
 # write the results to files
-=======
+
 # Tools.dict2file(c, "shortest_path_durations_cumulative.txt")
 # Tools.dict2file(h, "shortest_path_durations_histogram.txt")
 
