@@ -14,7 +14,7 @@ import Tools
 the_file = "edgelists/sexual_contacts.dat"
 # the_file = "edgelists/livestock_trade.csv"
 At = AdjMatrixSequence(the_file, directed=True, write_label_file=False)
-c = At.si_model(p=2.1)
+c = At.si_model(p=.8)
 for i in c:
     print(i)
 
