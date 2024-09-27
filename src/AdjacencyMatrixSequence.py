@@ -1116,7 +1116,7 @@ class AdjMatrixSequence(list):
             raise ValueError("Sentinel node not in network.")
 
         # set start_node for epidemic
-        if start_node or start_node is 0:
+        if start_node or start_node == 0:
             start = start_node
         else:
             start = np.random.randint(self.number_of_nodes)
